@@ -1,0 +1,36 @@
+{
+  "name": "ts-exp-mongo-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "scripts": {
+    "docs": "typedoc -out docs src",
+    "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
+    "build": "tsc",
+    "prestart": "npm run build",
+    "start": "node .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "alfred",
+  "license": "MIT",
+  "dependencies": {
+    "@types/js-yaml": "^3.12.1",
+    "express": "^4.17.1",
+    "js-yaml": "^3.13.1",
+    "json-api": "^3.0.0-rc.6.0.1",
+    "log4js": "^4.5.1",
+    "mongoose": "^5.6.4",
+    "reflect-metadata": "^0.1.13",
+    "typegoose": "^5.7.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.0",
+    "@types/mongodb": "^3.1.28",
+    "@types/mongoose": "^5.5.8",
+    "@types/node": "^12.6.2",
+    "json2typescript": "^1.2.3",
+    "tslint": "^5.18.0",
+    "typedoc": "^0.14.2",
+    "typescript": "^2.8.4"
+  }
+}

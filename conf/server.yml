@@ -1,0 +1,13 @@
+models:
+  - file: Person
+    reg: people
+  - file: Place
+    reg: places
+mongo:
+  algorithm: mongodb
+  host: localhost
+  port: 27017
+  username: alfredyang
+  pwd: "12345"
+  coll: "tstest"
+  auth: false
