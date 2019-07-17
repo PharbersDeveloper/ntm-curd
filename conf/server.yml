@@ -1,13 +1,13 @@
 models:
-  - file: Person
-    reg: people
-  - file: Place
-    reg: places
+  - file: Proposal
+    reg: proposals
+  - file: UsableProposal
+    reg: usable-proposals
 mongo:
   algorithm: mongodb
   host: localhost
   port: 27017
   username: alfredyang
   pwd: "12345"
-  coll: "tstest"
+  coll: "pharbers-ntm-client"
   auth: false
