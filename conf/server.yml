@@ -3,6 +3,14 @@ models:
     reg: proposals
   - file: UsableProposal
     reg: usable-proposals
+  - file: Hospital
+    reg: hospitals
+  - file: Product
+    reg: products
+  - file: ProductConfig
+    reg: product-configs
+  - file: Resource
+    reg: resources
 mongo:
   algorithm: mongodb
   host: 192.168.100.115
