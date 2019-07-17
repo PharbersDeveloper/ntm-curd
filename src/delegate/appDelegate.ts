@@ -3,10 +3,12 @@ import express from "express"
 import * as fs from "fs"
 import * as yaml from "js-yaml"
 import API, { ResourceTypeRegistry } from "json-api"
+import { APIControllerOpts } from "json-api/build/src/controllers/API"
 import { JsonConvert, ValueCheckingMode } from "json2typescript"
 import mongoose = require("mongoose")
 import { ServerConf } from "../configFactory/serverConf"
 import PhLogger from "../logger/phLogger"
+import { urlEncodeFilterParser } from "./urlEncodeFilterParser"
 
 /**
  * The summary section should be brief. On a documentation web site,
@@ -29,9 +31,20 @@ export default class AppDelegate {
 
     public exec() {
         this.loadConfiguration()
+        this.configMiddleware()
         this.connect2MongoDB()
         this.generateRoutes(this.getModelRegistry())
         this.listen2Port(8080)
+    }
+
+    protected configMiddleware() {
+        const router = express.Router()
+
+        // a middleware function with no mount path. This code is executed for every request to the router
+        router.use((req, res, next) => {
+            PhLogger.info(req.baseUrl)
+            next()
+        })
     }
 
     protected loadConfiguration() {
@@ -105,8 +118,13 @@ export default class AppDelegate {
     }
 
     protected generateRoutes(registry: ResourceTypeRegistry) {
+
+        const opts: APIControllerOpts = {
+            filterParser: urlEncodeFilterParser
+        }
+
         const Front = new API.httpStrategies.Express(
-            new API.controllers.API(registry),
+            new API.controllers.API(registry, opts),
             new API.controllers.Documentation(registry, {name: "Pharbers API"})
         )
 
