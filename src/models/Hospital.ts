@@ -1,5 +1,6 @@
 "use strict"
 import { prop, Ref, Typegoose } from "typegoose"
+import Image from "./Image"
 import IModelBase from "./modelBase"
 
 class Hospital extends Typegoose implements IModelBase<Hospital> {
@@ -18,8 +19,8 @@ class Hospital extends Typegoose implements IModelBase<Hospital> {
     @prop({ })
     public code?: string
 
-    @prop({ required: true })
-    public avatar: string
+    @prop({ ref: Image, required: true })
+    public avatar: Ref<Image>
 
     @prop({ required: true })
     public category: string

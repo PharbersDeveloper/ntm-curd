@@ -1,6 +1,7 @@
 "use strict"
-import { prop, Ref, Typegoose } from "typegoose"
+import { arrayProp, prop, Ref, Typegoose } from "typegoose"
 import IModelBase from "./modelBase"
+import Product from "./Product"
 
 class Proposal extends Typegoose implements IModelBase<Proposal> {
     @prop({ required: true })
@@ -12,13 +13,16 @@ class Proposal extends Typegoose implements IModelBase<Proposal> {
     @prop({ required: true })
     public totalPhase: number
 
-    @prop({ required: true })
+    @arrayProp({ items: String, required: true })
     public inputIds: string[]
 
-    @prop( { } )
+    @arrayProp( { items: String } )
     public salesReportIds: string[]
 
-    @prop( { } )
+    @arrayProp( { itemsRef: Product, required: true } )
+    public products: Array<Ref<Product>>
+
+    @arrayProp( { items: String } )
     public personnelAssessmentIds: string[]
 
     public getModel() {
