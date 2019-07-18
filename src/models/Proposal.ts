@@ -1,5 +1,6 @@
 "use strict"
 import { arrayProp, prop, Ref, Typegoose } from "typegoose"
+import Hospital from "./Hospital"
 import IModelBase from "./modelBase"
 import Product from "./Product"
 
@@ -21,6 +22,9 @@ class Proposal extends Typegoose implements IModelBase<Proposal> {
 
     @arrayProp( { itemsRef: Product, required: true } )
     public products: Array<Ref<Product>>
+
+    @arrayProp( { itemsRef: Hospital, required: true } )
+    public targets: Array<Ref<Hospital>>
 
     @arrayProp( { items: String } )
     public personnelAssessmentIds: string[]
