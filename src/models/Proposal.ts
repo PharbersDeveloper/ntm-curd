@@ -1,4 +1,5 @@
 "use strict"
+import { Resource } from "json-api"
 import { arrayProp, prop, Ref, Typegoose } from "typegoose"
 import Hospital from "./Hospital"
 import IModelBase from "./modelBase"
@@ -25,6 +26,9 @@ class Proposal extends Typegoose implements IModelBase<Proposal> {
 
     @arrayProp( { itemsRef: Hospital, required: true } )
     public targets: Array<Ref<Hospital>>
+
+    @arrayProp( { itemsRef: Resource, required: true } )
+    public resources: Array<Ref<Resource>>
 
     @arrayProp( { items: String } )
     public personnelAssessmentIds: string[]
