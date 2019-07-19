@@ -15,6 +15,12 @@ models:
     reg: policies
   - file: Project
     reg: projects
+  - file: Period
+    reg: periods
+  - file: Answer
+    reg: answers
+  - file: Requirement
+    reg: requirements
 mongo:
   algorithm: mongodb
   host: 192.168.100.115

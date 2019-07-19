@@ -4,6 +4,7 @@ import { arrayProp, prop, Ref, Typegoose } from "typegoose"
 import Hospital from "./Hospital"
 import IModelBase from "./modelBase"
 import Product from "./Product"
+import Requirement from "./Requirement"
 
 class Proposal extends Typegoose implements IModelBase<Proposal> {
     @prop({ required: true })
@@ -32,6 +33,9 @@ class Proposal extends Typegoose implements IModelBase<Proposal> {
 
     @arrayProp( { items: String } )
     public personnelAssessmentIds: string[]
+
+    @prop({ ref: Requirement, required: true})
+    public quota: Ref<Requirement>
 
     public getModel() {
         return this.getModelForClass(Proposal)
