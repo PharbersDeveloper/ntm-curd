@@ -3,7 +3,7 @@ import { arrayProp, prop, Ref, Typegoose } from "typegoose"
 import Image from "./Image"
 import IModelBase from "./modelBase"
 import Policy from "./Policy"
-import SplitRequirement from "./SplitRequirement"
+import Preset from "./Preset"
 
 class Hospital extends Typegoose implements IModelBase<Hospital> {
     @prop({ required: true })
@@ -48,8 +48,8 @@ class Hospital extends Typegoose implements IModelBase<Hospital> {
     @arrayProp({ itemsRef: Policy, required: true })
     public policies: Array<Ref<Policy>>
 
-    @prop({ ref: SplitRequirement,  required: true, default: null})
-    public splitRequirement: Ref<SplitRequirement>
+    @arrayProp({ itemsRef: Preset,  required: true, default: null})
+    public presets: Array<Ref<Preset>>
 
     public getModel() {
         return this.getModelForClass(Hospital)

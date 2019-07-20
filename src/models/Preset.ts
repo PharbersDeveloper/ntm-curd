@@ -1,8 +1,12 @@
 "use strict"
 import { prop, Ref, Typegoose } from "typegoose"
 import IModelBase from "./modelBase"
+import Product from "./Product"
 
-class SplitRequirement extends Typegoose implements IModelBase<SplitRequirement> {
+class Preset extends Typegoose implements IModelBase<Preset> {
+
+    @prop({ref: Product, required: true})
+    public product: Ref<Product>
 
     @prop({ default: 0})
     public salesQuota: number
@@ -14,8 +18,8 @@ class SplitRequirement extends Typegoose implements IModelBase<SplitRequirement>
     public achievements: number
 
     public getModel() {
-        return this.getModelForClass(SplitRequirement)
+        return this.getModelForClass(Preset)
     }
 }
 
-export default SplitRequirement
+export default Preset

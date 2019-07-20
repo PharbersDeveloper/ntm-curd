@@ -29,7 +29,7 @@ class Product extends Typegoose implements IModelBase<Product> {
     public convenience: string
 
     @prop({ required: true })
-    public productType: string
+    public productType: number
 
     @prop({ required: true })
     public priceType: string

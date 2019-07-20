@@ -23,8 +23,8 @@ models:
     reg: requirements
   - file: Report
     reg: reports
-  - file: SplitRequirement
-    reg: split-requirements
+  - file: Preset
+    reg: presets
 mongo:
   algorithm: mongodb
   host: 192.168.100.115
