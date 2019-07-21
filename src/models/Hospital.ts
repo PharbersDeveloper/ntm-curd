@@ -48,9 +48,6 @@ class Hospital extends Typegoose implements IModelBase<Hospital> {
     @arrayProp({ itemsRef: Policy, required: true })
     public policies: Array<Ref<Policy>>
 
-    @arrayProp({ itemsRef: Preset,  required: true, default: null})
-    public presets: Array<Ref<Preset>>
-
     public getModel() {
         return this.getModelForClass(Hospital)
     }
