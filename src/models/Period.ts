@@ -2,6 +2,7 @@
 import { arrayProp, prop, Ref, Typegoose } from "typegoose"
 import Answer from "./Answer"
 import IModelBase from "./modelBase"
+import Preset from "./Preset"
 import Report from "./Report"
 
 class Period extends Typegoose implements IModelBase<Period> {
@@ -17,6 +18,9 @@ class Period extends Typegoose implements IModelBase<Period> {
 
     @arrayProp( { itemsRef: Report, required: true } )
     public reports: Array<Ref<Report>>
+
+    @arrayProp( { itemsRef: Preset, default: []} )
+    public presets?: Array<Ref<Preset>>
 
     public getModel() {
         return this.getModelForClass(Period)
