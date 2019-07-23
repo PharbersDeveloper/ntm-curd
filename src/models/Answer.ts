@@ -33,6 +33,12 @@ class Answer extends Typegoose implements IModelBase<Answer> {
 
     @prop({ default: -1, required: true })
     public vocationalDevelopment?: number
+    
+    @prop({ default: -1, required: true })
+    public regionTraining?: number
+    
+    @prop({ default: -1, required: true })
+    public performanceTraining?: number
 
     @prop({ default: -1, required: true })
     public salesAbilityTraining?: number
