@@ -25,9 +25,13 @@ models:
     reg: reports
   - file: Preset
     reg: presets
+  - file: Result
+    reg: results
+  - file: Evaluation
+    reg: evaluations
 mongo:
   algorithm: mongodb
-  host: 192.168.100.115
+  host: 192.168.100.174
   port: 27017
   username: alfredyang
   pwd: "12345"

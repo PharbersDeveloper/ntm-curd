@@ -3,6 +3,7 @@ import { arrayProp, prop, Ref, Typegoose } from "typegoose"
 import IModelBase from "./modelBase"
 import Period from "./Period"
 import Proposal from "./Proposal"
+import Result from "./Result"
 
 class Project extends Typegoose implements IModelBase<Project> {
     @prop({ required: true })
@@ -25,6 +26,9 @@ class Project extends Typegoose implements IModelBase<Project> {
 
     @arrayProp({ itemsRef: Period, required: true })
     public periods: Array<Ref<Period>>
+
+    @arrayProp({ itemsRef: Result, required: true })
+    public results: Array<Ref<Result>>
 
     public getModel() {
         return this.getModelForClass(Project)

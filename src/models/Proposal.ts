@@ -6,6 +6,7 @@ import IModelBase from "./modelBase"
 import Preset from "./Preset"
 import Product from "./Product"
 import Requirement from "./Requirement"
+import Evaluation from "./Evaluation"
 
 class Proposal extends Typegoose implements IModelBase<Proposal> {
     @prop({ required: true })
@@ -28,6 +29,9 @@ class Proposal extends Typegoose implements IModelBase<Proposal> {
 
     @arrayProp( { itemsRef: Preset, required: true } )
     public presets: Array<Ref<Preset>>
+
+    @arrayProp( { itemsRef: Evaluation, required: true } )
+    public evaluations: Array<Ref<Evaluation>>
 
     @prop({ ref: Requirement, required: true})
     public quota: Ref<Requirement>

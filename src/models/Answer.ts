@@ -71,7 +71,7 @@ class Answer extends Typegoose implements IModelBase<Answer> {
     public resource?: Ref<Resource>
 
     @prop({ ref: Product, default: null, required: true })
-    public product?: Ref<Resource>
+    public product?: Ref<Product>
 
     @prop({ ref: Hospital, default: null, required: true })
     public target?: Ref<Hospital>
