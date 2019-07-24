@@ -7,6 +7,9 @@ import Product from "./Product"
 import Resource from "./Resource"
 
 class Answer extends Typegoose implements IModelBase<Answer> {
+    /**
+     * business related
+     */
     @prop({ enum: AnswerCategory, required: true })
     public category: AnswerCategory
 
@@ -22,27 +25,33 @@ class Answer extends Typegoose implements IModelBase<Answer> {
     @prop({ default: -1, required: true })
     public visitTime?: number
 
-    @prop({ default: -1, required: true })
-    public assistAccessTime?: number
-
-    @prop({ default: -1, required: true })
-    public abilityCoach?: number
-
+    /**
+     * resource related
+     */
     @prop({ default: -1, required: true })
     public productKnowledgeTraining?: number
 
     @prop({ default: -1, required: true })
     public vocationalDevelopment?: number
-    
+
     @prop({ default: -1, required: true })
     public regionTraining?: number
-    
+
     @prop({ default: -1, required: true })
     public performanceTraining?: number
 
     @prop({ default: -1, required: true })
     public salesAbilityTraining?: number
 
+    @prop({ default: -1, required: true })
+    public assistAccessTime?: number
+
+    @prop({ default: -1, required: true })
+    public abilityCoach?: number
+
+    /**
+     * management input
+     */
     @prop({ default: -1, required: true })
     public strategAnalysisTime?: number
 
