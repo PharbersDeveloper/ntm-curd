@@ -22,6 +22,12 @@ class Project extends Typegoose implements IModelBase<Project> {
     public status: number
 
     @prop({ required: true })
+    public startTime: number
+
+    @prop({ required: true })
+    public endTime: number
+
+    @prop({ required: true })
     public lastUpdate: number
 
     @arrayProp({ itemsRef: Period, required: true })

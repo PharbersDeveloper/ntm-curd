@@ -4,7 +4,7 @@ import IModelBase from "./modelBase"
 
 class Validation extends Typegoose implements IModelBase<Validation> {
     @prop({ required: true })
-    public balabala: string
+    public type: string
 
     public getModel() {
         return this.getModelForClass(Validation)
