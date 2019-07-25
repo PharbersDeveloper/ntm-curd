@@ -1,12 +1,12 @@
 "use strict"
 import { Resource } from "json-api"
 import { arrayProp, prop, Ref, Typegoose } from "typegoose"
+import Evaluation from "./Evaluation"
 import Hospital from "./Hospital"
 import IModelBase from "./modelBase"
 import Preset from "./Preset"
 import Product from "./Product"
 import Requirement from "./Requirement"
-import Evaluation from "./Evaluation"
 import Validation from "./Validation"
 
 class Proposal extends Typegoose implements IModelBase<Proposal> {
