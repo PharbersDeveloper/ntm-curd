@@ -7,6 +7,7 @@ import Preset from "./Preset"
 import Product from "./Product"
 import Requirement from "./Requirement"
 import Evaluation from "./Evaluation"
+import Validation from "./Validation"
 
 class Proposal extends Typegoose implements IModelBase<Proposal> {
     @prop({ required: true })
@@ -35,6 +36,9 @@ class Proposal extends Typegoose implements IModelBase<Proposal> {
 
     @prop({ ref: Requirement, required: true})
     public quota: Ref<Requirement>
+
+    @prop({ ref: Validation, required: true})
+    public validation: Ref<Validation>
 
     public getModel() {
         return this.getModelForClass(Proposal)
