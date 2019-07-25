@@ -11,6 +11,12 @@ class Evaluation extends Typegoose implements IModelBase<Evaluation> {
     public level: string
 
     @prop({ required: true })
+    public abilityDescription: string
+
+    @prop({ required: true })
+    public awardDescription: string
+
+    @prop({ required: true })
     public levelDescription: string
 
     @prop({ required: true })

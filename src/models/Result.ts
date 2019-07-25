@@ -16,10 +16,10 @@ class Result extends Typegoose implements IModelBase<Result> {
     public awardLevel: string
 
     @prop({ ref: Image, required: true})
-    public img: Ref<Image>
+    public abilityImg: Ref<Image>
 
-    @prop({ ref: Proposal, required: true})
-    public proposal: Ref<Proposal>
+    @prop({ ref: Image, required: true})
+    public awardImg: Ref<Image>
 
     public getModel() {
         return this.getModelForClass(Result)
