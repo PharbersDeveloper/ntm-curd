@@ -29,6 +29,8 @@ models:
     reg: results
   - file: Evaluation
     reg: evaluations
+  - file: Validation
+    reg: validations
 mongo:
   algorithm: mongodb
   host: 192.168.100.174

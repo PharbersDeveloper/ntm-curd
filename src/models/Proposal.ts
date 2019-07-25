@@ -34,7 +34,7 @@ class Proposal extends Typegoose implements IModelBase<Proposal> {
     @arrayProp( { itemsRef: Evaluation, required: true } )
     public evaluations: Array<Ref<Evaluation>>
 
-    @prop({ ref: Validation, required: true})
+    @arrayProp( { itemsRef: Validation, required: true } )
     public validations: Array<Ref<Validation>>
 
     @prop({ ref: Requirement, required: true})
