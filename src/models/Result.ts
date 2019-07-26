@@ -1,25 +1,18 @@
 "use strict"
 import { arrayProp, prop, Ref, Typegoose } from "typegoose"
 import { ResultCategory } from "../enum/ResultCategory"
-import Image from "./Image"
+import Level from "./Level"
 import IModelBase from "./modelBase"
-import Proposal from "./Proposal"
 
 class Result extends Typegoose implements IModelBase<Result> {
     @prop({ enum: ResultCategory, required: true })
     public category: ResultCategory
 
-    @prop({ required: true })
-    public abilityLevel: string
+    @prop({ ref: Level, required: true})
+    public abilityLevel: Ref<Level>
 
-    @prop({ required: true })
-    public awardLevel: string
-
-    @prop({ ref: Image, required: true})
-    public abilityImg: Ref<Image>
-
-    @prop({ ref: Image, required: true})
-    public awardImg: Ref<Image>
+    @prop({ ref: Level, required: true})
+    public awardLevel: Ref<Level>
 
     public getModel() {
         return this.getModelForClass(Result)
