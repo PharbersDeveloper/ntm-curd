@@ -4,6 +4,7 @@ import Image from "./Image"
 import IModelBase from "./modelBase"
 import Policy from "./Policy"
 import Preset from "./Preset"
+import Region from "./Region"
 
 class Hospital extends Typegoose implements IModelBase<Hospital> {
     @prop({ required: true })
@@ -47,6 +48,9 @@ class Hospital extends Typegoose implements IModelBase<Hospital> {
 
     @arrayProp({ itemsRef: Policy, required: true })
     public policies: Array<Ref<Policy>>
+
+    @prop({ ref: Region, required: true })
+    public region: Ref<Region>
 
     public getModel() {
         return this.getModelForClass(Hospital)
