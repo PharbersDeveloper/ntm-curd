@@ -1,4 +1,5 @@
 "use strict"
+import axios from "axios"
 import express from "express"
 import * as fs from "fs"
 import * as yaml from "js-yaml"
@@ -28,6 +29,7 @@ export default class AppDelegate {
 
     private conf: ServerConf
     private app = express()
+    private router = express.Router()
 
     public exec() {
         this.loadConfiguration()
@@ -38,11 +40,31 @@ export default class AppDelegate {
     }
 
     protected configMiddleware() {
-        const router = express.Router()
+        // const router = express.Router()
+        this.app.use("/", this.router)
 
         // a middleware function with no mount path. This code is executed for every request to the router
-        router.use((req, res, next) => {
-            PhLogger.info(req.baseUrl)
+        this.router.use((req, res, next) => {
+            const auth = req.get("Authorization")
+            if (auth === undefined) {
+                PhLogger.error("no auth")
+                res.status(500).send({error: "no auth!"})
+                return
+            }
+
+            const token = req.get("Authorization").split(" ")[1]
+
+            // TODO token验证请求及返回处理替换为OAuth接口
+            // axios.get("https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY")
+            //     .then((response) => {
+            //         PhLogger.info("yeah")
+            //         next()
+            //     })
+            //     .catch((error) => {
+            //         PhLogger.error("auth error")
+            //         res.status(500).send({error: "auth error!"}) // 可替换为OAuth返回错误
+            //         return
+            //     })
             next()
         })
     }

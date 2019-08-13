@@ -12,7 +12,7 @@ class Preset extends Typegoose implements IModelBase<Preset> {
 
     @prop({ref: Hospital, required: true})
     public hospital?: Ref<Hospital>
-    
+
     @prop({ref: Resource, required: false})
     public resource?: Ref<Resource>
 
@@ -21,22 +21,22 @@ class Preset extends Typegoose implements IModelBase<Preset> {
 
     @prop({ default: 0})
     public achievements?: number     // p_sales
-    
+
     @prop({ default: 0})
     public potential?: number    // 铁马不变
-    
+
     @prop({ default: 0})
     public share?: number    // p_share
 
     @prop({ default: ""})
     public territoryManagementAbility?: string // p_territory_management_ability
-    
+
     @prop({ default: ""})
     public salesSkills?: string // p_sales_skills
-    
+
     @prop({ default: ""})
     public productKnowledge?: string // p_product_knowledge
-    
+
     @prop({ default: ""})
     public behaviorEfficiency?: string // p_behavior_efficiency
 
