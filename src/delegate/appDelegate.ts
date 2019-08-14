@@ -52,20 +52,26 @@ export default class AppDelegate {
                 return
             }
 
-            const token = req.get("Authorization").split(" ")[1]
+            // const token = req.get("Authorization").split(" ")[1]
 
             // TODO token验证请求及返回处理替换为OAuth接口
-            // axios.get("https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY")
-            //     .then((response) => {
-            //         PhLogger.info("yeah")
-            //         next()
-            //     })
-            //     .catch((error) => {
-            //         PhLogger.error("auth error")
-            //         res.status(500).send({error: "auth error!"}) // 可替换为OAuth返回错误
-            //         return
-            //     })
-            next()
+            axios.post("http://192.168.100.174:9096/v0/TokenValidation", null, {
+                headers: {
+                    Authorization: auth,
+                },
+            })
+            .then((response) => {
+                PhLogger.info("yeah")
+                PhLogger.info(response)
+                next()
+            })
+            .catch((error) => {
+                PhLogger.error(error)
+                PhLogger.error("auth error")
+                res.status(500).send(error) // 可替换为OAuth返回错误
+                return
+            })
+            // next()
         })
     }
 
