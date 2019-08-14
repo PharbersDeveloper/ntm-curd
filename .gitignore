@@ -3,4 +3,3 @@ node_modules
 docs
 log
 .nyc_output
-*.xlsx

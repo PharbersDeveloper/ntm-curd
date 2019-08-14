@@ -2,25 +2,34 @@
 import { arrayProp, prop, Ref, Typegoose } from "typegoose"
 import { ResultCategory } from "../enum/ResultCategory"
 import IModelBase from "./modelBase"
+import { JsonObject, JsonProperty } from "json2typescript"
 
+@JsonObject("Evaluation")
 class Evaluation extends Typegoose implements IModelBase<Evaluation> {
+    
+    @JsonProperty("category", String)
     @prop({ enum: ResultCategory, required: true })
-    public category: ResultCategory
+    public category: ResultCategory = ResultCategory.Overall
 
+    @JsonProperty("level", String)
     @prop({ required: true })
-    public level: string
+    public level: string = ""
 
-    @prop({ required: true })
-    public abilityDescription: string
+    @JsonProperty("abilityDescription", String)
+    @prop({ required: false, default: "" })
+    public abilityDescription: string = ""
 
-    @prop({ required: true })
-    public awardDescription: string
+    @JsonProperty("awardDescription", String)
+    @prop({ required: false, default: "" })
+    public awardDescription: string = ""
 
-    @prop({ required: true })
-    public levelDescription: string
+    @JsonProperty("levelDescription", String)
+    @prop({ required: false, default: "" })
+    public levelDescription: string = ""
 
-    @prop({ required: true })
-    public actionDescription: string
+    @JsonProperty("actionDescription", String)
+    @prop({ required: false, default: "" })
+    public actionDescription: string = ""
 
     public getModel() {
         return this.getModelForClass(Evaluation)

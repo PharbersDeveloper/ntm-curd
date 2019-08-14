@@ -1,31 +1,42 @@
 "use strict"
 import { prop, Ref, Typegoose } from "typegoose"
 import IModelBase from "./modelBase"
+import { JsonObject, JsonProperty } from "json2typescript"
 
+@JsonObject("Requirement")
 class Requirement extends Typegoose implements IModelBase<Requirement> {
+    
+    @JsonProperty("totalQuotas", Number)
     @prop({ required: true })
-    public totalQuotas: number
+    public totalQuotas: number = 0
 
+    @JsonProperty("meetingPlaces", Number)
     @prop({ required: true })
-    public meetingPlaces: number
+    public meetingPlaces: number = 0
 
+    @JsonProperty("visitingHours", Number)
     @prop({ required: true })
-    public visitingHours: number
+    public visitingHours: number = 0
 
-    @prop({ required: true })
-    public teamExperience: string
+    @JsonProperty("teamExperience", String)
+    @prop({ required: false, default: "" })
+    public teamExperience: string = ""
 
-    @prop({ required: true })
+    @JsonProperty("teamDescription", String)
+    @prop({ required: false, default: "" })
     public teamDescription: string
 
+    @JsonProperty("managerKpi", Number)
     @prop({ required: true })
-    public managerKpi: number
+    public managerKpi: number = 0
 
+    @JsonProperty("managementHours", Number)
     @prop({ required: true })
-    public mangementHours: number
+    public mangementHours: number = 0
 
+    @JsonProperty("totalBudget", Number)
     @prop({ required: true })
-    public totalBudget: number
+    public totalBudget: number = 0
 
     public getModel() {
         return this.getModelForClass(Requirement)
