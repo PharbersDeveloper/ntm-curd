@@ -1,5 +1,4 @@
 "use strict"
-import { Resource } from "json-api"
 import { JsonObject, JsonProperty } from "json2typescript"
 import { arrayProp, prop, Ref, Typegoose } from "typegoose"
 import Evaluation from "./Evaluation"
@@ -8,6 +7,7 @@ import IModelBase from "./modelBase"
 import Preset from "./Preset"
 import Product from "./Product"
 import Requirement from "./Requirement"
+import Resource from "./Resource"
 import Validation from "./Validation"
 
 @JsonObject("Proposal")

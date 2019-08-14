@@ -30,7 +30,7 @@ class Preset extends Typegoose implements IModelBase<Preset> {
     @prop({ default: 0.0 })
     public achievements?: number = 0     // p_sales
 
-    @JsonProperty("potetial", Number)
+    @JsonProperty("potential", Number)
     @prop({ default: 0 })
     public potential?: number = 0   // 铁马不变
 

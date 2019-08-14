@@ -2,7 +2,7 @@
   "name": "ntm-curd",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
+  "main": "dist/src/index.js",
   "scripts": {
     "docs": "typedoc -out docs src",
     "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
