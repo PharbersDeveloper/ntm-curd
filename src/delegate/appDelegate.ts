@@ -7,6 +7,7 @@ import API, { ResourceTypeRegistry } from "json-api"
 import { APIControllerOpts } from "json-api/build/src/controllers/API"
 import { JsonConvert, ValueCheckingMode } from "json2typescript"
 import mongoose = require("mongoose")
+import Kafka from "node-rdkafka"
 import { ServerConf } from "../configFactory/serverConf"
 import PhLogger from "../logger/phLogger"
 import { urlEncodeFilterParser } from "./urlEncodeFilterParser"
@@ -30,6 +31,7 @@ export default class AppDelegate {
     private conf: ServerConf
     private app = express()
     private router = express.Router()
+    private kafka = Kafka
 
     public exec() {
         this.loadConfiguration()
@@ -40,7 +42,6 @@ export default class AppDelegate {
     }
 
     protected configMiddleware() {
-        // const router = express.Router()
         this.app.use("/", this.router)
 
         // a middleware function with no mount path. This code is executed for every request to the router
@@ -52,12 +53,11 @@ export default class AppDelegate {
                 return
             }
 
-            // const token = req.get("Authorization").split(" ")[1]
             const host = this.conf.env.oauthHost
             const port = this.conf.env.oauthPort
             const namespace = this.conf.env.oauthApiNamespace
 
-            // TODO token验证请求及返回处理替换为OAuth接口
+            // token验证请求及返回处理
             axios.post(`http://${host}:${port}/${namespace}/TokenValidation`, null, {
                 headers: {
                     Authorization: auth,
@@ -68,8 +68,9 @@ export default class AppDelegate {
                     res.status(500).send(response.data)
                     return
                 } else {
-                    PhLogger.info(response)
-                    next()
+                    res.status(500).send(this.kafka)
+                    return
+                    // next()
                 }
             }).catch((error) => {
                 PhLogger.error("auth error")
