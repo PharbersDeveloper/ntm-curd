@@ -9,7 +9,10 @@
     "build": "tsc",
     "prestart": "npm run build",
     "start": "node .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "pretest": "tsc",
+    "test": "nyc mocha",
+    "watch": "mocha-typescript-watch",
+    "prepare": "tsc"
   },
   "author": "alfred",
   "license": "MIT",
@@ -21,18 +24,25 @@
     "json-api": "^3.0.0-rc.6.0.1",
     "log4js": "^4.5.1",
     "mongoose": "^5.6.4",
-    "node-rdkafka": "^2.7.1-2",
     "reflect-metadata": "^0.1.13",
-    "typegoose": "^5.7.2"
+    "typegoose": "^5.7.2",
+    "xlsx": "^0.15.0"
   },
   "devDependencies": {
+    "@types/chai": "^3.2.0",
     "@types/express": "^4.17.0",
+    "@types/mocha": "^5.2.7",
     "@types/mongodb": "^3.1.28",
     "@types/mongoose": "^5.5.8",
     "@types/node": "^12.6.2",
+    "chai": "^3.2.0",
     "json2typescript": "^1.2.3",
+    "mocha": "^6.2.0",
+    "mocha-typescript": "^1.1.17",
+    "nyc": "^14.1.1",
+    "source-map-support": "^0.5.13",
     "tslint": "^5.18.0",
     "typedoc": "^0.14.2",
-    "typescript": "^2.8.4"
+    "typescript": "^2.9.2"
   }
 }
