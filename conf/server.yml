@@ -43,4 +43,7 @@ mongo:
   pwd: "12345"
   coll: "pharbers-ntm-client"
   auth: false
-
+env:
+  oauthHost: 192.168.100.174
+  oauthPort: 9096
+  oauthApiNamespace: "v0"
