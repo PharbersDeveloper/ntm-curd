@@ -59,19 +59,14 @@ export default class AppDelegate {
                 headers: {
                     Authorization: auth,
                 },
-            })
-            .then((response) => {
-                PhLogger.info("yeah")
+            }).then((response) => {
                 PhLogger.info(response)
                 next()
-            })
-            .catch((error) => {
-                PhLogger.error(error)
+            }).catch((error) => {
                 PhLogger.error("auth error")
                 res.status(500).send(error) // 可替换为OAuth返回错误
                 return
             })
-            // next()
         })
     }
 
