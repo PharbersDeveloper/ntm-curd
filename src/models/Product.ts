@@ -2,64 +2,85 @@
 import { prop, Ref, Typegoose } from "typegoose"
 import Image from "./Image"
 import IModelBase from "./modelBase"
+import { JsonObject, JsonProperty } from "json2typescript"
 
+@JsonObject("Product")
 class Product extends Typegoose implements IModelBase<Product> {
+    
+    @JsonProperty("name", String)
     @prop({ required: true })
-    public name: string
+    public name: string = ""
 
+    @JsonProperty("productCategory", String)
     @prop({ required: true })
-    public productCategory: string
+    public productCategory: string = ""
 
+    @JsonProperty("medicateCategory", String)
     @prop({ required: true })
-    public medicateCategory: string
+    public medicateCategory: string = ""
 
+    @JsonProperty("producer", String)
     @prop({ required: true })
-    public producer: string
+    public producer: string = ""
 
     @prop({ ref: Image, required: true })
     public avatar: Ref<Image>
 
-    @prop({ required: true })
-    public safety: string
+    @JsonProperty("safety", String)
+    @prop({ required: false, default: "" })
+    public safety: string = ""
 
-    @prop({ required: true })
-    public effectiveness: string
+    @JsonProperty("effectiveness", String)
+    @prop({ required: false, default: "" })
+    public effectiveness: string = ""
 
-    @prop({ required: true })
-    public convenience: string
+    @JsonProperty("convenience", String)
+    @prop({ required: false, default: "" })
+    public convenience: string = ""
 
+    @JsonProperty("productType", Number)
     @prop({ required: true })
-    public productType: number
+    public productType: number = 0
 
+    @JsonProperty("priceType", String)
     @prop({ required: true })
-    public priceType: string
+    public priceType: string = ""
 
+    @JsonProperty("price", Number)
     @prop({ required: true })
-    public price: number
+    public price: number = 0
 
+    @JsonProperty("cost", Number)
     @prop({ required: true })
-    public cost: number
+    public cost: number = 0
 
+    @JsonProperty("launchDate", String)
     @prop({ required: true })
-    public launchDate: number
+    public launchDate: String = ""
 
+    @JsonProperty("treatmentArea", String)
     @prop({ required: true })
-    public treatmentArea: string
+    public treatmentArea: string = ""
 
+    @JsonProperty("feature", String)
     @prop({ required: true })
-    public feature: string
+    public feature: string = ""
 
-    @prop({ required: true })
-    public targetDepartment: string
+    @JsonProperty("targetDepartment", String)
+    @prop({ required: false, default: "" })
+    public targetDepartment: string = ""
 
-    @prop({ required: true })
-    public patentDescribe: string
+    @JsonProperty("patentDescribe", String)
+    @prop({ required: false, default: "" })
+    public patentDescribe: string = ""
 
-    @prop({ required: true })
-    public costEffective: string
+    @JsonProperty("costEffective", String)
+    @prop({ required: false, default: "" })
+    public costEffective: string = ""
 
+    @JsonProperty("lifeCycle", String)
     @prop({ required: true })
-    public lifeCycle: string
+    public lifeCycle: string = ""
 
     public getModel() {
         return this.getModelForClass(Product)
