@@ -59,19 +59,19 @@ class Preset extends Typegoose implements IModelBase<Preset> {
     public lowTarget?: string // p_low_target
 
     @prop({ default: 0})
-    public targetDoctorNum?: number 
+    public targetDoctorNum?: number
 
     @prop({ default: 0})
-    public targetDoctorCoverage?: number 
+    public targetDoctorCoverage?: number
 
     @prop({ default: 0})
-    public visitDoctorA?: number 
+    public visitDoctorA?: number
 
     @prop({ default: 0})
-    public visitDoctorB?: number 
+    public visitDoctorB?: number
 
     @prop({ default: 0})
-    public visitDoctorC?: number 
+    public visitDoctorC?: number
 
     public getModel() {
         return this.getModelForClass(Preset)
