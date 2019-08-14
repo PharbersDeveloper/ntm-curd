@@ -5,6 +5,7 @@ import XLSX = require("xlsx")
 import PhLogger from "../../src/logger/phLogger"
 import Hospital from "../../src/models/Hospital"
 import Product from "../../src/models/Product";
+import Resource from "../../src/models/Resource";
 
 @suite class ExcelDataInput {
 
@@ -17,6 +18,7 @@ import Product from "../../src/models/Product";
         PhLogger.info(`start input data with excel`)
         // const file = "/Users/alfredyang/Desktop/code/pharbers/ntm-curd/test/data/tm.xlsx"
         const file = "test/data/tm.xlsx"
+        const wb = XLSX.readFile(file)
 
         {
             /**
@@ -24,7 +26,6 @@ import Product from "../../src/models/Product";
              * and collect all the insertion ids
              */
             PhLogger.info(`1. read hospital data in the excel`)
-            const wb = XLSX.readFile(file)
 
             const data = XLSX.utils.sheet_to_json(wb.Sheets["Hospital"], { header: 2, defval: "" })
 
@@ -45,8 +46,7 @@ import Product from "../../src/models/Product";
          */
         {
             PhLogger.info(`2. read product data in the excel`)
-            const wb = XLSX.readFile(file)
-    
+
             const data = XLSX.utils.sheet_to_json(wb.Sheets["Product"], { header: 2, defval: "" })
     
             const jsonConvert: JsonConvert = new JsonConvert()
@@ -58,6 +58,26 @@ import Product from "../../src/models/Product";
                 return th.getModel().create(jsonConvert.deserializeObject(x, Product))
             }))
             PhLogger.info(products)
+        }
+
+        /**
+         * 3. read products data in the excel
+         * and colleect all the insertion ids
+         */
+        {
+            PhLogger.info(`3. read resource data in the excel`)
+    
+            const data = XLSX.utils.sheet_to_json(wb.Sheets["Resource"], { header: 2, defval: "" })
+    
+            const jsonConvert: JsonConvert = new JsonConvert()
+            const th = new Resource()
+            const resources = await Promise.all(data.map ( x => {
+                // jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
+                jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
+                jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
+                return th.getModel().create(jsonConvert.deserializeObject(x, Resource))
+            }))
+            PhLogger.info(resources)
         }
     }
 
