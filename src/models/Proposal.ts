@@ -1,5 +1,6 @@
 "use strict"
 import { Resource } from "json-api"
+import { JsonObject, JsonProperty } from "json2typescript"
 import { arrayProp, prop, Ref, Typegoose } from "typegoose"
 import Evaluation from "./Evaluation"
 import Hospital from "./Hospital"
@@ -8,11 +9,10 @@ import Preset from "./Preset"
 import Product from "./Product"
 import Requirement from "./Requirement"
 import Validation from "./Validation"
-import { JsonObject, JsonProperty } from "json2typescript"
 
 @JsonObject("Proposal")
 class Proposal extends Typegoose implements IModelBase<Proposal> {
-    
+
     @JsonProperty("name", String)
     @prop({ required: true })
     public name: string = ""

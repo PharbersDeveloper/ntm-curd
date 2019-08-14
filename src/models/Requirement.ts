@@ -1,11 +1,11 @@
 "use strict"
+import { JsonObject, JsonProperty } from "json2typescript"
 import { prop, Ref, Typegoose } from "typegoose"
 import IModelBase from "./modelBase"
-import { JsonObject, JsonProperty } from "json2typescript"
 
 @JsonObject("Requirement")
 class Requirement extends Typegoose implements IModelBase<Requirement> {
-    
+
     @JsonProperty("totalQuotas", Number)
     @prop({ required: true })
     public totalQuotas: number = 0

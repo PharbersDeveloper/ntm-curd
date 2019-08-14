@@ -7,7 +7,7 @@ import API, { ResourceTypeRegistry } from "json-api"
 import { APIControllerOpts } from "json-api/build/src/controllers/API"
 import { JsonConvert, ValueCheckingMode } from "json2typescript"
 import mongoose = require("mongoose")
-import Kafka from "node-rdkafka"
+// import Kafka from "node-rdkafka"
 import { ServerConf } from "../configFactory/serverConf"
 import PhLogger from "../logger/phLogger"
 import { urlEncodeFilterParser } from "./urlEncodeFilterParser"
@@ -31,7 +31,7 @@ export default class AppDelegate {
     private conf: ServerConf
     private app = express()
     private router = express.Router()
-    private kafka = Kafka
+    // private kafka = Kafka
 
     public exec() {
         this.loadConfiguration()
@@ -68,7 +68,7 @@ export default class AppDelegate {
                     res.status(500).send(response.data)
                     return
                 } else {
-                    res.status(500).send(this.kafka)
+                    // res.status(500).send(this.kafka)
                     return
                     // next()
                 }

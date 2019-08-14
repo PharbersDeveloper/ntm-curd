@@ -1,12 +1,12 @@
 "use strict"
+import { JsonObject, JsonProperty } from "json2typescript"
 import { prop, Ref, Typegoose } from "typegoose"
 import Image from "./Image"
 import IModelBase from "./modelBase"
-import { JsonObject, JsonProperty } from "json2typescript"
 
 @JsonObject("Resource")
 class Resource extends Typegoose implements IModelBase<Resource> {
-    
+
     @JsonProperty("name", String)
     @prop({ required: true })
     public name: string = ""

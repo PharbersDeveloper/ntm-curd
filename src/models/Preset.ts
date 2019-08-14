@@ -1,10 +1,12 @@
 "use strict"
+import { JsonObject, JsonProperty } from "json2typescript"
 import { prop, Ref, Typegoose } from "typegoose"
 import Hospital from "./Hospital"
 import IModelBase from "./modelBase"
 import Product from "./Product"
 import Resource from "./Resource"
 
+@JsonObject("Preset")
 class Preset extends Typegoose implements IModelBase<Preset> {
 
     @prop({ref: Product, required: true})
@@ -16,62 +18,65 @@ class Preset extends Typegoose implements IModelBase<Preset> {
     @prop({ref: Resource, required: false})
     public resource?: Ref<Resource>
 
-    @prop({ default: 0})
-    public salesQuota?: number   // p_quota
+    @JsonProperty("salesQuota", Number)
+    @prop({ default: 0 })
+    public salesQuota?: number = 0  // p_quota
 
-    @prop({ default: 0})
-    public achievements?: number     // p_sales
+    @JsonProperty("sales", Number)
+    @prop({ default: 0 })
+    public sales?: number = 0    // p_sales
 
-    @prop({ default: 0})
-    public potential?: number    // 铁马不变
+    @JsonProperty("achievements", Number)
+    @prop({ default: 0.0 })
+    public achievements?: number = 0     // p_sales
 
-    @prop({ default: 0})
-    public share?: number    // p_share
+    @JsonProperty("potetial", Number)
+    @prop({ default: 0 })
+    public potential?: number = 0   // 铁马不变
 
-    @prop({ default: ""})
-    public territoryManagementAbility?: string // p_territory_management_ability
+    @JsonProperty("share", Number)
+    @prop({ default: 0 })
+    public share?: number = 0   // p_share
 
-    @prop({ default: ""})
-    public salesSkills?: string // p_sales_skills
+    @JsonProperty("territoryManagementAbility", Number)
+    @prop({ default: 0 })
+    public territoryManagementAbility?: number = 0 // p_territory_management_ability
 
-    @prop({ default: ""})
-    public productKnowledge?: string // p_product_knowledge
+    @JsonProperty("salesSkills", Number)
+    @prop({ default: 0 })
+    public salesSkills?: number = 0 // p_sales_skills
 
-    @prop({ default: ""})
-    public behaviorEfficiency?: string // p_behavior_efficiency
+    @JsonProperty("salesSkills", Number)
+    @prop({ default: 0 })
+    public productKnowledge?: number = 0 // p_product_knowledge
 
-    @prop({ default: ""})
-    public workMotivation?: string // p_work_motivation
+    @JsonProperty("behaviorEfficiency", Number)
+    @prop({ default: 0 })
+    public behaviorEfficiency?: number = 0// p_behavior_efficiency
 
-    @prop({ default: "" })
-    public target?: string // p_target
+    @JsonProperty("workMotivation", Number)
+    @prop({ default: 0 })
+    public workMotivation?: number = 0 // p_work_motivation
 
-    @prop({ default: "" })
-    public targetCoverage?: string // p_target_coverage
+    @JsonProperty("targetDoctorNum", Number)
+    @prop({ default: 0 })
+    public targetDoctorNum?: number // p_target
 
-    @prop({ default: "" })
-    public highTarget?: string // p_high_target
+    @JsonProperty("targetDoctorCoverage", Number)
+    @prop({ default: 0.0 })
+    public targetDoctorCoverage?: number = 0.0 // p_target_coverage
 
-    @prop({ default: "" })
-    public middleTarget?: string // p_middle_target
+    @JsonProperty("highTarget", Number)
+    @prop({ default: 0 })
+    public highTarget?: number = 0 // p_high_target
 
-    @prop({ default: "" })
-    public lowTarget?: string // p_low_target
+    @JsonProperty("middleTarget", Number)
+    @prop({ default: 0 })
+    public middleTarget?: number = 0 // p_middle_target
 
-    @prop({ default: 0})
-    public targetDoctorNum?: number
-
-    @prop({ default: 0})
-    public targetDoctorCoverage?: number
-
-    @prop({ default: 0})
-    public visitDoctorA?: number
-
-    @prop({ default: 0})
-    public visitDoctorB?: number
-
-    @prop({ default: 0})
-    public visitDoctorC?: number
+    @JsonProperty("lowTarget", Number)
+    @prop({ default: 0 })
+    public lowTarget?: number = 0 // p_low_target
 
     public getModel() {
         return this.getModelForClass(Preset)

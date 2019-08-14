@@ -3,12 +3,13 @@ import { slow, suite, test, timeout } from "mocha-typescript"
 import mongoose = require("mongoose")
 import XLSX = require("xlsx")
 import PhLogger from "../../src/logger/phLogger"
+import Evaluation from "../../src/models/Evaluation"
 import Hospital from "../../src/models/Hospital"
-import Product from "../../src/models/Product";
-import Resource from "../../src/models/Resource";
-import Evaluation from "../../src/models/Evaluation";
-import Requirement from "../../src/models/Requirement";
-import Proposal from "../../src/models/Proposal";
+import Preset from "../../src/models/Preset"
+import Product from "../../src/models/Product"
+import Proposal from "../../src/models/Proposal"
+import Requirement from "../../src/models/Requirement"
+import Resource from "../../src/models/Resource"
 
 @suite class ExcelDataInput {
 
@@ -30,17 +31,17 @@ import Proposal from "../../src/models/Proposal";
              */
             PhLogger.info(`1. read hospital data in the excel`)
 
-            const data = XLSX.utils.sheet_to_json(wb.Sheets["Hospital"], { header: 2, defval: "" })
+            const data = XLSX.utils.sheet_to_json(wb.Sheets.Hospital, { header: 2, defval: "" })
 
             const jsonConvert: JsonConvert = new JsonConvert()
             const th = new Hospital()
-            const hosps = await Promise.all(data.map ( x => {
+            const hosps = await Promise.all(data.map ( (x) => {
                 // jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
                 jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
                 jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
                 return th.getModel().create(jsonConvert.deserializeObject(x, Hospital))
             }))
-            PhLogger.info(hosps)
+            PhLogger.info(hosps.length)
         }
 
         /**
@@ -50,17 +51,17 @@ import Proposal from "../../src/models/Proposal";
         {
             PhLogger.info(`2. read product data in the excel`)
 
-            const data = XLSX.utils.sheet_to_json(wb.Sheets["Product"], { header: 2, defval: "" })
-    
+            const data = XLSX.utils.sheet_to_json(wb.Sheets.Product, { header: 2, defval: "" })
+
             const jsonConvert: JsonConvert = new JsonConvert()
             const th = new Product()
-            const products = await Promise.all(data.map ( x => {
+            const products = await Promise.all(data.map ( (x) => {
                 // jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
                 jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
                 jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
                 return th.getModel().create(jsonConvert.deserializeObject(x, Product))
             }))
-            PhLogger.info(products)
+            PhLogger.info(products.length)
         }
 
         /**
@@ -69,18 +70,18 @@ import Proposal from "../../src/models/Proposal";
          */
         {
             PhLogger.info(`3. read resource data in the excel`)
-    
-            const data = XLSX.utils.sheet_to_json(wb.Sheets["Resource"], { header: 2, defval: "" })
-    
+
+            const data = XLSX.utils.sheet_to_json(wb.Sheets.Resource, { header: 2, defval: "" })
+
             const jsonConvert: JsonConvert = new JsonConvert()
             const th = new Resource()
-            const resources = await Promise.all(data.map ( x => {
+            const resources = await Promise.all(data.map ( (x) => {
                 // jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
                 jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
                 jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
                 return th.getModel().create(jsonConvert.deserializeObject(x, Resource))
             }))
-            PhLogger.info(resources)
+            PhLogger.info(resources.length)
         }
 
         /**
@@ -88,19 +89,19 @@ import Proposal from "../../src/models/Proposal";
          * and colleect all the insertion ids
          */
         {
-            PhLogger.info(`4. read resource data in the excel`)
-    
-            const data = XLSX.utils.sheet_to_json(wb.Sheets["Evaluation"], { header: 2, defval: "" })
-    
+            PhLogger.info(`4. read evaluation data in the excel`)
+
+            const data = XLSX.utils.sheet_to_json(wb.Sheets.Evaluation, { header: 2, defval: "" })
+
             const jsonConvert: JsonConvert = new JsonConvert()
             const th = new Evaluation()
-            const evls = await Promise.all(data.map ( x => {
+            const evls = await Promise.all(data.map ( (x) => {
                 // jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
                 jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
                 jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
                 return th.getModel().create(jsonConvert.deserializeObject(x, Evaluation))
             }))
-            PhLogger.info(evls)
+            PhLogger.info(evls.length)
         }
 
         /**
@@ -109,39 +110,59 @@ import Proposal from "../../src/models/Proposal";
          */
         {
             PhLogger.info(`5. read requirement data in the excel`)
-    
-            const data = XLSX.utils.sheet_to_json(wb.Sheets["Requirement"], { header: 2, defval: "" })
-    
+
+            const data = XLSX.utils.sheet_to_json(wb.Sheets.Requirement, { header: 2, defval: "" })
+
             const jsonConvert: JsonConvert = new JsonConvert()
             const th = new Requirement()
-            const reqs = await Promise.all(data.map ( x => {
+            const reqs = await Promise.all(data.map ( (x) => {
                 // jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
                 jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
                 jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
                 return th.getModel().create(jsonConvert.deserializeObject(x, Requirement))
             }))
-            PhLogger.info(reqs)
+            PhLogger.info(reqs.length)
+        }
+
+        /**
+         * 9. read preset data in the excel
+         * and colleect all the insertion ids
+         */
+        {
+            PhLogger.info(`9. read preset data in the excel`)
+
+            const data = XLSX.utils.sheet_to_json(wb.Sheets.Preset, { header: 2, defval: "" })
+
+            const jsonConvert: JsonConvert = new JsonConvert()
+            const th = new Preset()
+            const presets = await Promise.all(data.map ( (x) => {
+                jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
+                jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
+                jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
+                return th.getModel().create(jsonConvert.deserializeObject(x, Preset))
+            }))
+            PhLogger.info(presets)
         }
 
         /**
          * 10. read proposal data in the excel
          * and colleect all the insertion ids
          */
-        {
-            PhLogger.info(`10. read proposal data in the excel`)
-    
-            const data = XLSX.utils.sheet_to_json(wb.Sheets["Proposal"], { header: 2, defval: "" })
-    
-            const jsonConvert: JsonConvert = new JsonConvert()
-            const th = new Proposal()
-            const pls = await Promise.all(data.map ( x => {
-                // jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
-                jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
-                jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
-                return th.getModel().create(jsonConvert.deserializeObject(x, Proposal))
-            }))
-            PhLogger.info(pls)
-        }
+        // {
+        //     PhLogger.info(`10. read proposal data in the excel`)
+
+        //     const data = XLSX.utils.sheet_to_json(wb.Sheets["Proposal"], { header: 2, defval: "" })
+
+        //     const jsonConvert: JsonConvert = new JsonConvert()
+        //     const th = new Proposal()
+        //     const pls = await Promise.all(data.map ( x => {
+        //         // jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
+        //         jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
+        //         jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
+        //         return th.getModel().create(jsonConvert.deserializeObject(x, Proposal))
+        //     }))
+        //     PhLogger.info(pls)
+        // }
     }
 
     public after() {
