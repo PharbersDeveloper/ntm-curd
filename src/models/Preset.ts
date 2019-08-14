@@ -43,6 +43,21 @@ class Preset extends Typegoose implements IModelBase<Preset> {
     @prop({ default: ""})
     public workMotivation?: string // p_work_motivation
 
+    @prop({ default: "" })
+    public target?: string // p_target
+    
+    @prop({ default: "" })
+    public targetCoverage?: string // p_target_coverage
+    
+    @prop({ default: "" })
+    public highTarget?: string // p_high_target
+    
+    @prop({ default: "" })
+    public middleTarget?: string // p_middle_target
+    
+    @prop({ default: "" })
+    public lowTarget?: string // p_low_target
+
     public getModel() {
         return this.getModelForClass(Preset)
     }
