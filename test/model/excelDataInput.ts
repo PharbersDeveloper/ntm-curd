@@ -1,9 +1,9 @@
+import { JsonConvert, OperationMode, ValueCheckingMode } from "json2typescript"
 import { slow, suite, test, timeout } from "mocha-typescript"
 import mongoose = require("mongoose")
 import XLSX = require("xlsx")
 import PhLogger from "../../src/logger/phLogger"
-import { JsonConvert, ValueCheckingMode, OperationMode } from "json2typescript"
-import Hospital from "../../src/models/Hospital";
+import Hospital from "../../src/models/Hospital"
 
 @suite class ExcelDataInput {
 
@@ -23,21 +23,23 @@ import Hospital from "../../src/models/Hospital";
         PhLogger.info(`1. read hospital data in the excel`)
         const wb = XLSX.readFile(file)
 
-        const data = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[1]], { header: 2, defval:"" })
+        const data = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[1]], { header: 2, defval: "" })
 
         const jsonConvert: JsonConvert = new JsonConvert()
-        data.map ( x => {
-            // PhLogger.info(data)
+        const tmp = new Hospital()
+        data.map ( async (x) => {
             jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
             jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
             jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
             const result = jsonConvert.deserializeObject(x, Hospital)
-            PhLogger.info(result)
-        }) 
+            const f = await tmp.getModel().create(result)
+            PhLogger.info(f)
+        })
+        PhLogger.info(data)
     }
 
     public after() {
         PhLogger.info(`after starting the test`)
-        mongoose.disconnect()
+        // mongoose.disconnect()
     }
 }

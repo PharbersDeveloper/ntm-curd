@@ -1,10 +1,10 @@
 "use strict"
+import { JsonObject, JsonProperty } from "json2typescript"
 import { arrayProp, prop, Ref, Typegoose } from "typegoose"
 import Image from "./Image"
 import IModelBase from "./modelBase"
 import Policy from "./Policy"
 import Region from "./Region"
-import { JsonProperty, JsonObject } from "json2typescript";
 
 @JsonObject("Hospital")
 class Hospital extends Typegoose implements IModelBase<Hospital> {
@@ -30,7 +30,7 @@ class Hospital extends Typegoose implements IModelBase<Hospital> {
     public code?: string = ""
 
     @prop({ ref: Image, required: true })
-    public avatar: Ref<Image> 
+    public avatar: Ref<Image>
 
     @JsonProperty("category", String)
     @prop({ required: true })
@@ -53,7 +53,7 @@ class Hospital extends Typegoose implements IModelBase<Hospital> {
     public income: number = 0
 
     @JsonProperty("spaceBelongs", String)
-    @prop({ required: true })
+    @prop({ required: false, default: "" })
     public spaceBelongs: string = ""
 
     @JsonProperty("abilityToPay", String)
@@ -63,7 +63,7 @@ class Hospital extends Typegoose implements IModelBase<Hospital> {
     @JsonProperty("selfPayPercentage", Number)
     @prop({ required: true })
     public selfPayPercentage: number = 0.0
-    
+
     @JsonProperty("patientNum", Number)
     @prop({ required: true })
     public patientNum: number = 0.0
