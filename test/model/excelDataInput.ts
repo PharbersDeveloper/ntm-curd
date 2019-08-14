@@ -10,6 +10,8 @@ import Product from "../../src/models/Product"
 import Proposal from "../../src/models/Proposal"
 import Requirement from "../../src/models/Requirement"
 import Resource from "../../src/models/Resource"
+import UsableProposal from "../../src/models/UsableProposal"
+import Validation from "../../src/models/Validation"
 
 @suite class ExcelDataInput {
 
@@ -155,7 +157,7 @@ import Resource from "../../src/models/Resource"
 
             const jsonConvert: JsonConvert = new JsonConvert()
             const th = new Proposal()
-            const pls = await Promise.all(data.map ( (x) => {
+            const pls = await Promise.all(data.map ( async (x) => {
                 // jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
                 jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
                 jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
@@ -167,8 +169,19 @@ import Resource from "../../src/models/Resource"
                 proposal.evaluations = evls
                 proposal.quota = reqs[0]
 
-                return th.getModel().create(proposal)
+                const validation = new Validation()
+                validation.inputType = "managementTimeInputType#Number*businessBudgetInputType#Number*businessSalesTargetInputType#Number*businessMeetingPlacesInputType#Number"
+                validation.maxValue = "managementMaxTime#100*managementMaxActionPoint#5*businessMaxBudget#200000*businessMaxSalesTarget#3700000*businessMaxMeetingPlaces#6"
+                const v = await validation.getModel().create(validation)
+                proposal.validation = v
+
+                const f = await th.getModel().create(proposal)
+                const ups = new UsableProposal()
+                ups.accountId = "5ce6d793aa60bdae2e8656e7"
+                ups.proposal = f
+                ups.getModel().create(ups)
             }))
+
         }
     }
 
