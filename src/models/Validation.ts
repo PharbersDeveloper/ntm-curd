@@ -9,16 +9,16 @@ class Validation extends Typegoose implements IModelBase<Validation> {
     @prop({ required: true })
     public maxValue: string
 
-    @prop({ required: true })
+    @prop({ required: false, default: "" })
     public mustInput: string
 
-    @prop({ required: true })
+    @prop({ required: false, default: "" })
     public mustFullyAllocate: string
 
-    @prop({ required: true })
+    @prop({ required: false, default: "" })
     public noZero: string
 
-    @prop({ required: true })
+    @prop({ required: false, default: "" })
     public special: string
 
     public getModel() {
