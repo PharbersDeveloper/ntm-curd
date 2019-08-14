@@ -53,18 +53,27 @@ export default class AppDelegate {
             }
 
             // const token = req.get("Authorization").split(" ")[1]
+            const host = this.conf.env.oauthHost
+            const port = this.conf.env.oauthPort
+            const namespace = this.conf.env.oauthApiNamespace
 
             // TODO token验证请求及返回处理替换为OAuth接口
-            axios.post("http://192.168.100.174:9096/v0/TokenValidation", null, {
+            axios.post(`http://${host}:${port}/${namespace}/TokenValidation`, null, {
                 headers: {
                     Authorization: auth,
                 },
             }).then((response) => {
-                PhLogger.info(response)
-                next()
+                if (response.data.error !== undefined) {
+                    PhLogger.error("auth error")
+                    res.status(500).send(response.data)
+                    return
+                } else {
+                    PhLogger.info(response)
+                    next()
+                }
             }).catch((error) => {
                 PhLogger.error("auth error")
-                res.status(500).send(error) // 可替换为OAuth返回错误
+                res.status(500).send(error)
                 return
             })
         })
