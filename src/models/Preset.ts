@@ -18,6 +18,10 @@ class Preset extends Typegoose implements IModelBase<Preset> {
     @prop({ref: Resource, required: false})
     public resource?: Ref<Resource>
 
+    @JsonProperty("category", Number)
+    @prop({ default: 0 })
+    public category?: number = 0  // 
+
     @JsonProperty("salesQuota", Number)
     @prop({ default: 0 })
     public salesQuota?: number = 0  // p_quota

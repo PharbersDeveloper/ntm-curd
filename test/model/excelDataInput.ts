@@ -12,6 +12,7 @@ import Requirement from "../../src/models/Requirement"
 import Resource from "../../src/models/Resource"
 import UsableProposal from "../../src/models/UsableProposal"
 import Validation from "../../src/models/Validation"
+import { PresetCategory } from "../../src/enum/PresetCategory"
 
 @suite class ExcelDataInput {
 
@@ -138,11 +139,39 @@ import Validation from "../../src/models/Validation"
 
             const jsonConvert: JsonConvert = new JsonConvert()
             const th = new Preset()
-            presets = await Promise.all(data.map ( (x) => {
+            presets = await Promise.all(data.map ( (x: any) => {
                 // jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
                 jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
                 jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
-                return th.getModel().create(jsonConvert.deserializeObject(x, Preset))
+
+                let item = jsonConvert.deserializeObject(x, Preset)
+                if (item.category & 1 /*PresetCategory.Business*/) {
+                    const hospName: string = x.hospital
+                    const productName: string = x.product
+                    const oh = hosps.find(x => x.name == hospName)
+                    const op = products.find(x => x.name == productName)
+                    item.hospital = oh
+                    item.product = op
+                    item.resource = null
+                }
+
+                if (item.category & 2 /*PresetCategory.Resource*/) {
+                    const resName = x.resource
+                    const or = resources.find(x => x.name == resName)
+                    item.hospital = null
+                    item.product = null
+                    item.resource = or
+                }
+
+                if (item.category & 4 /*PresetCategory.Quota*/) {
+                    const productName: string = x.product
+                    const op = products.find(x => x.name == productName)
+                    item.hospital = null
+                    item.product = op
+                    item.resource = null
+                }
+                
+                return th.getModel().create(item)
             }))
         }
 
@@ -170,14 +199,22 @@ import Validation from "../../src/models/Validation"
                 proposal.quota = reqs[0]
 
                 const validation = new Validation()
-                validation.inputType = "managementTimeInputType#Number*businessBudgetInputType#Number*businessSalesTargetInputType#Number*businessMeetingPlacesInputType#Number"
-                validation.maxValue = "managementMaxTime#100*managementMaxActionPoint#5*businessMaxBudget#200000*businessMaxSalesTarget#3700000*businessMaxMeetingPlaces#6"
+                validation.inputType = "managementTimeInputType#Number*" 
+                                     + "businessBudgetInputType#Number*" 
+                                     + "businessSalesTargetInputType#Number*" 
+                                     + "businessMeetingPlacesInputType#Number"
+                validation.maxValue = "managementMaxTime#100*" 
+                                    + "managementMaxActionPoint#5*" 
+                                    + "businessMaxBudget#200000*" 
+                                    + "businessMaxSalesTarget#3700000*" 
+                                    + "businessMaxMeetingPlaces#6"
+
                 const v = await validation.getModel().create(validation)
                 proposal.validation = v
 
                 const f = await th.getModel().create(proposal)
                 const ups = new UsableProposal()
-                ups.accountId = "5ce6d793aa60bdae2e8656e7"
+                ups.accountId = "5cc3fb57ceb3c45854b80e57"
                 ups.proposal = f
                 ups.getModel().create(ups)
             }))

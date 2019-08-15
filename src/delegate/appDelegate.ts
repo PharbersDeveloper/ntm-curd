@@ -35,7 +35,7 @@ export default class AppDelegate {
 
     public exec() {
         this.loadConfiguration()
-        this.configMiddleware()
+        // this.configMiddleware()
         this.connect2MongoDB()
         this.generateRoutes(this.getModelRegistry())
         this.listen2Port(8080)
