@@ -7,7 +7,7 @@ import API, { ResourceTypeRegistry } from "json-api"
 import { APIControllerOpts } from "json-api/build/src/controllers/API"
 import { JsonConvert, ValueCheckingMode } from "json2typescript"
 import mongoose = require("mongoose")
-import Kafka from "node-rdkafka"
+// import Kafka from "node-rdkafka"
 import { ServerConf } from "../configFactory/serverConf"
 import PhLogger from "../logger/phLogger"
 import { urlEncodeFilterParser } from "./urlEncodeFilterParser"
@@ -31,7 +31,7 @@ export default class AppDelegate {
     private conf: ServerConf
     private app = express()
     private router = express.Router()
-    private kafka = Kafka
+    // private kafka = Kafka
 
     public exec() {
         this.loadConfiguration()
@@ -45,7 +45,7 @@ export default class AppDelegate {
         this.app.use("/", this.router)
 
         // a middleware function with no mount path. This code is executed for every request to the router
-        
+
         this.router.use((req, res, next) => {
             // Kafka Producer Demo
             // const producer = new Kafka.Producer({
@@ -98,8 +98,7 @@ export default class AppDelegate {
             //     PhLogger.error("Error from producer")
             //     PhLogger.error(err)
             // })
-            
-            
+
             // token验证请求及返回处理
             const auth = req.get("Authorization")
             if (auth === undefined) {

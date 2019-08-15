@@ -12,13 +12,14 @@ import Requirement from "../../src/models/Requirement"
 import Resource from "../../src/models/Resource"
 import UsableProposal from "../../src/models/UsableProposal"
 import Validation from "../../src/models/Validation"
+import Report from "../../src/models/Report";
 
 @suite(timeout(1000 * 60), slow(1000))
 class ExcelDataInput {
 
     public static before() {
         PhLogger.info(`before starting the test`)
-        mongoose.connect("mongodb://192.168.100.176:27017/pharbers-ntm-client-3")
+        mongoose.connect("mongodb://192.168.100.176:27017/pharbers-ntm-client-4")
     }
 
     public static after() {
@@ -251,6 +252,76 @@ class ExcelDataInput {
                     item.resource = null
                 }
                 item.proposal = fp
+                // @ts-ignore
+                item.proposalId = fp._id.toString()
+                return th.getModel().create(item)
+            }))
+        }
+
+        /**
+         * 8. read report data in the excel
+         * and colleect all the insertion ids
+         */
+        // let presets: Preset[] = []
+        {
+            PhLogger.info(`8. read report data in the excel`)
+
+            const data = XLSX.utils.sheet_to_json(wb.Sheets.Report, { header: 2, defval: "" })
+
+            const jsonConvert: JsonConvert = new JsonConvert()
+            const th = new Report()
+            await Promise.all(data.map ( (x: any) => {
+                // jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
+                jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
+                jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
+
+                const item = jsonConvert.deserializeObject(x, Report)
+                if (item.category === "Hospital") {
+                    const hospName: string = x.hospital
+                    const productName: string = x.product
+                    const oh = hosps.find((y) => y.name === hospName)
+                    const op = products.find((y) => y.name === productName)
+                    item.hospital = oh
+                    item.product = op
+                    item.resource = null
+                }
+
+                if (item.category === "Resource") {
+                    const resName = x.resource
+                    const productName: string = x.product
+                    const or = resources.find((y) => y.name === resName)
+                    const op = products.find((y) => y.name === productName)
+                    item.hospital = null
+                    item.product = op
+                    item.resource = or
+                }
+
+                if (item.category === "Product") {
+                    const productName: string = x.product
+                    const op = products.find((y) => y.name === productName)
+                    item.hospital = null
+                    item.product = op
+                    item.resource = null
+                }
+
+                // if (item.category & 8 /*PresetCategory.Protental*/) {
+                //     const hospName: string = x.hospital
+                //     const productName: string = x.product
+                //     const op = products.find((y) => y.name === productName)
+                //     const oh = hosps.find((y) => y.name === hospName)
+                //     item.hospital = oh
+                //     item.product = op
+                //     item.resource = null
+                // }
+
+                // if (item.category & 16 /*PresetCategory.Share*/) {
+                //     const productName: string = x.product
+                //     const op = products.find((y) => y.name === productName)
+                //     item.hospital = null
+                //     item.product = op
+                //     item.resource = null
+                // }
+                // item.proposal = fp
                 // @ts-ignore
                 item.proposalId = fp._id.toString()
                 return th.getModel().create(item)

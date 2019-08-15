@@ -37,11 +37,11 @@ models:
     reg: regions
 mongo:
   algorithm: mongodb
-  host: 192.168.100.174
+  host: 192.168.100.176
   port: 27017
   username: alfredyang
   pwd: "12345"
-  coll: "pharbers-ntm-client"
+  coll: "pharbers-ntm-client-3"
   auth: false
 env:
   oauthHost: 192.168.100.174

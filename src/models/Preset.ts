@@ -16,7 +16,6 @@ class Preset extends Typegoose implements IModelBase<Preset> {
     @prop({ required: false, default: "" })
     public proposalId?: string
 
-
     @prop({ref: Product, required: true, default: null })
     public product?: Ref<Product>
 
@@ -62,7 +61,7 @@ class Preset extends Typegoose implements IModelBase<Preset> {
     @prop({ default: 0 })
     public salesSkills?: number = 0 // p_sales_skills
 
-    @JsonProperty("salesSkills", Number)
+    @JsonProperty("productKnowledge", Number)
     @prop({ default: 0 })
     public productKnowledge?: number = 0 // p_product_knowledge
 
