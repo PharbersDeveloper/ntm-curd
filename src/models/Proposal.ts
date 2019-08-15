@@ -24,7 +24,7 @@ class Proposal extends Typegoose implements IModelBase<Proposal> {
     @JsonProperty("totalPhase", Number)
     @prop({ required: true })
     public totalPhase: number = 1
-    
+
     @JsonProperty("case", String)
     @prop({ required: true })
     public case: string = ""

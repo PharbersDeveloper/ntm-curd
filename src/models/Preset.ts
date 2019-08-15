@@ -18,9 +18,13 @@ class Preset extends Typegoose implements IModelBase<Preset> {
     @prop({ref: Resource, required: false})
     public resource?: Ref<Resource>
 
+    @JsonProperty("phase", Number)
+    @prop({ required: true, default: 0 })
+    public phase: number = 0  //
+
     @JsonProperty("category", Number)
     @prop({ default: 0 })
-    public category?: number = 0  // 
+    public category?: number = 0  //
 
     @JsonProperty("salesQuota", Number)
     @prop({ default: 0 })
@@ -43,7 +47,7 @@ class Preset extends Typegoose implements IModelBase<Preset> {
     public share?: number = 0   // p_share
 
     @JsonProperty("territoryManagementAbility", Number)
-    @prop({ default: 0 })
+    @prop({ required: false, default: 0 })
     public territoryManagementAbility?: number = 0 // p_territory_management_ability
 
     @JsonProperty("salesSkills", Number)
@@ -64,14 +68,14 @@ class Preset extends Typegoose implements IModelBase<Preset> {
 
     @JsonProperty("targetDoctorNum", Number)
     @prop({ default: 0 })
-    public targetDoctorNum?: number // p_target
+    public targetDoctorNum?: number = 0 // p_target
 
     @JsonProperty("targetDoctorCoverage", Number)
     @prop({ default: 0.0 })
     public targetDoctorCoverage?: number = 0.0 // p_target_coverage
 
     @JsonProperty("highTarget", Number)
-    @prop({ default: 0 })
+    @prop({ required: true, default: 0 })
     public highTarget?: number = 0 // p_high_target
 
     @JsonProperty("middleTarget", Number)
