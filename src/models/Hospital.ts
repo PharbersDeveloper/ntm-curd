@@ -57,7 +57,7 @@ class Hospital extends Typegoose implements IModelBase<Hospital> {
     public spaceBelongs: string = ""
 
     @JsonProperty("abilityToPay", String)
-    @prop({ required: true })
+    @prop({ required: false, default: "" })
     public abilityToPay: string = ""
 
     @JsonProperty("selfPayPercentage", Number)
@@ -65,8 +65,16 @@ class Hospital extends Typegoose implements IModelBase<Hospital> {
     public selfPayPercentage: number = 0.0
 
     @JsonProperty("patientNum", Number)
-    @prop({ required: true })
+    @prop({ required: false, default: 0 })
     public patientNum: number = 0.0
+
+    @JsonProperty("patientNumA", Number)
+    @prop({ required: false, default: 0 })
+    public patientNumA: number = 0.0
+
+    @JsonProperty("patientNumB", Number)
+    @prop({ required: false, default: 0 })
+    public patientNumB: number = 0.0
 
     @arrayProp({ itemsRef: Policy, required: true })
     public policies: Array<Ref<Policy>>

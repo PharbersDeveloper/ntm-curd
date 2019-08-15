@@ -13,16 +13,32 @@ import Resource from "../../src/models/Resource"
 import UsableProposal from "../../src/models/UsableProposal"
 import Validation from "../../src/models/Validation"
 
-@suite class ExcelDataInput {
+@suite(timeout(1000 * 60), slow(1000))
+class ExcelDataInput {
 
-    public before() {
+    public static before() {
         PhLogger.info(`before starting the test`)
-        mongoose.connect("mongodb://192.168.100.176:27017/pharbers-ntm-client-2")
+        mongoose.connect("mongodb://192.168.100.176:27017/pharbers-ntm-client-3")
+    }
+
+    public static after() {
+        PhLogger.info(`after starting the test`)
+        mongoose.disconnect()
     }
 
     @test public async excelModelData() {
         PhLogger.info(`start input data with excel`)
         const file = "test/data/tm.xlsx"
+        await this.loadExcelData(file)
+    }
+    
+    @test public async ucbModelData() {
+        PhLogger.info(`start input data with excel`)
+        const file = "test/data/ucb.xlsx"
+        await this.loadExcelData(file)
+    }
+
+    public async loadExcelData(file: string) {
         const wb = XLSX.readFile(file)
 
         /**
@@ -42,7 +58,6 @@ import Validation from "../../src/models/Validation"
                 jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
                 jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
                 return th.getModel().create(jsonConvert.deserializeObject(x, Hospital))
-
             }))
         }
 
@@ -126,30 +141,13 @@ import Validation from "../../src/models/Validation"
             }))
         }
 
-        /**
-         * 9. read preset data in the excel
-         * and colleect all the insertion ids
-         */
-        let presets: Preset[] = []
-        {
-            PhLogger.info(`9. read preset data in the excel`)
 
-            const data = XLSX.utils.sheet_to_json(wb.Sheets.Preset, { header: 2, defval: "" })
-
-            const jsonConvert: JsonConvert = new JsonConvert()
-            const th = new Preset()
-            presets = await Promise.all(data.map ( (x) => {
-                // jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
-                jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
-                jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
-                return th.getModel().create(jsonConvert.deserializeObject(x, Preset))
-            }))
-        }
 
         /**
          * 10. read proposal data in the excel
          * and colleect all the insertion ids
          */
+        let fp: Proposal
         {
             PhLogger.info(`10. read proposal data in the excel`)
 
@@ -164,31 +162,99 @@ import Validation from "../../src/models/Validation"
                 const proposal = jsonConvert.deserializeObject(x, Proposal)
                 proposal.targets = hosps
                 proposal.products = products
-                proposal.presets = presets
+                // proposal.presets = presets
                 proposal.resources = resources
                 proposal.evaluations = evls
                 proposal.quota = reqs[0]
 
                 const validation = new Validation()
-                validation.inputType = "managementTimeInputType#Number*businessBudgetInputType#Number" +
-                "*businessSalesTargetInputType#Number*businessMeetingPlacesInputType#Number"
-                validation.maxValue = "managementMaxTime#100*managementMaxActionPoint#5*businessMaxBudget" +
-                "#200000*businessMaxSalesTarget#3700000*businessMaxMeetingPlaces#6"
+                validation.inputType = "managementTimeInputType#Number*"
+                                     + "businessBudgetInputType#Number*"
+                                     + "businessSalesTargetInputType#Number*"
+                                     + "businessMeetingPlacesInputType#Number"
+                validation.maxValue = "managementMaxTime#100*"
+                                    + "managementMaxActionPoint#5*"
+                                    + "businessMaxBudget#200000*"
+                                    + "businessMaxSalesTarget#3700000*"
+                                    + "businessMaxMeetingPlaces#6"
+
                 const v = await validation.getModel().create(validation)
                 proposal.validation = v
 
-                const f = await th.getModel().create(proposal)
+                fp = await th.getModel().create(proposal)
                 const ups = new UsableProposal()
-                ups.accountId = "5ce6d793aa60bdae2e8656e7"
-                ups.proposal = f
+                ups.accountId = "5cc3fb57ceb3c45854b80e57"
+                ups.proposal = fp
                 ups.getModel().create(ups)
             }))
-
         }
-    }
 
-    public after() {
-        PhLogger.info(`after starting the test`)
-        mongoose.disconnect()
+        /**
+         * 9. read preset data in the excel
+         * and colleect all the insertion ids
+         */
+        // let presets: Preset[] = []
+        {
+            PhLogger.info(`9. read preset data in the excel`)
+
+            const data = XLSX.utils.sheet_to_json(wb.Sheets.Preset, { header: 2, defval: "" })
+
+            const jsonConvert: JsonConvert = new JsonConvert()
+            const th = new Preset()
+            await Promise.all(data.map ( (x: any) => {
+                // jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
+                jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
+                jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
+
+                const item = jsonConvert.deserializeObject(x, Preset)
+                if (item.category & 1 /*PresetCategory.Business*/) {
+                    const hospName: string = x.hospital
+                    const productName: string = x.product
+                    const oh = hosps.find((y) => y.name === hospName)
+                    const op = products.find((y) => y.name === productName)
+                    item.hospital = oh
+                    item.product = op
+                    item.resource = null
+                }
+
+                if (item.category & 2 /*PresetCategory.Resource*/) {
+                    const resName = x.resource
+                    const or = resources.find((y) => y.name === resName)
+                    item.hospital = null
+                    item.product = null
+                    item.resource = or
+                }
+
+                if (item.category & 4 /*PresetCategory.Quota*/) {
+                    const productName: string = x.product
+                    const op = products.find((y) => y.name === productName)
+                    item.hospital = null
+                    item.product = op
+                    item.resource = null
+                }
+
+                if (item.category & 8 /*PresetCategory.Protental*/) {
+                    const hospName: string = x.hospital
+                    const productName: string = x.product
+                    const op = products.find((y) => y.name === productName)
+                    const oh = hosps.find((y) => y.name === hospName)
+                    item.hospital = oh
+                    item.product = op
+                    item.resource = null
+                }
+
+                if (item.category & 16 /*PresetCategory.Share*/) {
+                    const productName: string = x.product
+                    const op = products.find((y) => y.name === productName)
+                    item.hospital = null
+                    item.product = op
+                    item.resource = null
+                }
+                item.proposal = fp
+                // @ts-ignore
+                item.proposalId = fp._id.toString()
+                return th.getModel().create(item)
+            }))
+        }
     }
 }

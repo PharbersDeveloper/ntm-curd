@@ -4,19 +4,35 @@ import { prop, Ref, Typegoose } from "typegoose"
 import Hospital from "./Hospital"
 import IModelBase from "./modelBase"
 import Product from "./Product"
+import Proposal from "./Proposal"
 import Resource from "./Resource"
 
 @JsonObject("Preset")
 class Preset extends Typegoose implements IModelBase<Preset> {
 
-    @prop({ref: Product, required: true})
+    @prop({ref: Proposal, required: true, default: null})
+    public proposal?: Ref<Proposal>
+
+    @prop({ required: false, default: "" })
+    public proposalId?: string
+
+
+    @prop({ref: Product, required: true, default: null })
     public product?: Ref<Product>
 
-    @prop({ref: Hospital, required: true})
+    @prop({ref: Hospital, required: true, default: null })
     public hospital?: Ref<Hospital>
 
-    @prop({ref: Resource, required: false})
+    @prop({ref: Resource, required: false, default: null })
     public resource?: Ref<Resource>
+
+    @JsonProperty("phase", Number)
+    @prop({ required: true, default: 0 })
+    public phase: number = 0  //
+
+    @JsonProperty("category", Number)
+    @prop({ default: 0 })
+    public category?: number = 0  //
 
     @JsonProperty("salesQuota", Number)
     @prop({ default: 0 })
@@ -39,7 +55,7 @@ class Preset extends Typegoose implements IModelBase<Preset> {
     public share?: number = 0   // p_share
 
     @JsonProperty("territoryManagementAbility", Number)
-    @prop({ default: 0 })
+    @prop({ required: false, default: 0 })
     public territoryManagementAbility?: number = 0 // p_territory_management_ability
 
     @JsonProperty("salesSkills", Number)
@@ -60,14 +76,14 @@ class Preset extends Typegoose implements IModelBase<Preset> {
 
     @JsonProperty("targetDoctorNum", Number)
     @prop({ default: 0 })
-    public targetDoctorNum?: number // p_target
+    public targetDoctorNum?: number = 0 // p_target
 
     @JsonProperty("targetDoctorCoverage", Number)
     @prop({ default: 0.0 })
     public targetDoctorCoverage?: number = 0.0 // p_target_coverage
 
     @JsonProperty("highTarget", Number)
-    @prop({ default: 0 })
+    @prop({ required: true, default: 0 })
     public highTarget?: number = 0 // p_high_target
 
     @JsonProperty("middleTarget", Number)
