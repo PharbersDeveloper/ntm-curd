@@ -4,18 +4,26 @@ import { prop, Ref, Typegoose } from "typegoose"
 import Hospital from "./Hospital"
 import IModelBase from "./modelBase"
 import Product from "./Product"
+import Proposal from "./Proposal"
 import Resource from "./Resource"
 
 @JsonObject("Preset")
 class Preset extends Typegoose implements IModelBase<Preset> {
 
-    @prop({ref: Product, required: true})
+    @prop({ref: Proposal, required: true, default: null})
+    public proposal?: Ref<Proposal>
+
+    @prop({ required: false, default: "" })
+    public proposalId?: string
+
+
+    @prop({ref: Product, required: true, default: null })
     public product?: Ref<Product>
 
-    @prop({ref: Hospital, required: true})
+    @prop({ref: Hospital, required: true, default: null })
     public hospital?: Ref<Hospital>
 
-    @prop({ref: Resource, required: false})
+    @prop({ref: Resource, required: false, default: null })
     public resource?: Ref<Resource>
 
     @JsonProperty("phase", Number)

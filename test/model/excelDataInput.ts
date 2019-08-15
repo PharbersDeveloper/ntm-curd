@@ -29,6 +29,16 @@ class ExcelDataInput {
     @test public async excelModelData() {
         PhLogger.info(`start input data with excel`)
         const file = "test/data/tm.xlsx"
+        await this.loadExcelData(file)
+    }
+    
+    @test public async ucbModelData() {
+        PhLogger.info(`start input data with excel`)
+        const file = "test/data/ucb.xlsx"
+        await this.loadExcelData(file)
+    }
+
+    public async loadExcelData(file: string) {
         const wb = XLSX.readFile(file)
 
         /**
@@ -48,7 +58,6 @@ class ExcelDataInput {
                 jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
                 jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
                 return th.getModel().create(jsonConvert.deserializeObject(x, Hospital))
-
             }))
         }
 
@@ -132,58 +141,13 @@ class ExcelDataInput {
             }))
         }
 
-        /**
-         * 9. read preset data in the excel
-         * and colleect all the insertion ids
-         */
-        let presets: Preset[] = []
-        {
-            PhLogger.info(`9. read preset data in the excel`)
 
-            const data = XLSX.utils.sheet_to_json(wb.Sheets.Preset, { header: 2, defval: "" })
-
-            const jsonConvert: JsonConvert = new JsonConvert()
-            const th = new Preset()
-            presets = await Promise.all(data.map ( (x: any) => {
-                // jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
-                jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
-                jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
-
-                const item = jsonConvert.deserializeObject(x, Preset)
-                if (item.category & 1 /*PresetCategory.Business*/) {
-                    const hospName: string = x.hospital
-                    const productName: string = x.product
-                    const oh = hosps.find((y) => y.name === hospName)
-                    const op = products.find((y) => y.name === productName)
-                    item.hospital = oh
-                    item.product = op
-                    item.resource = null
-                }
-
-                if (item.category & 2 /*PresetCategory.Resource*/) {
-                    const resName = x.resource
-                    const or = resources.find((y) => y.name === resName)
-                    item.hospital = null
-                    item.product = null
-                    item.resource = or
-                }
-
-                if (item.category & 4 /*PresetCategory.Quota*/) {
-                    const productName: string = x.product
-                    const op = products.find((y) => y.name === productName)
-                    item.hospital = null
-                    item.product = op
-                    item.resource = null
-                }
-
-                return th.getModel().create(item)
-            }))
-        }
 
         /**
          * 10. read proposal data in the excel
          * and colleect all the insertion ids
          */
+        let fp: Proposal
         {
             PhLogger.info(`10. read proposal data in the excel`)
 
@@ -198,7 +162,7 @@ class ExcelDataInput {
                 const proposal = jsonConvert.deserializeObject(x, Proposal)
                 proposal.targets = hosps
                 proposal.products = products
-                proposal.presets = presets
+                // proposal.presets = presets
                 proposal.resources = resources
                 proposal.evaluations = evls
                 proposal.quota = reqs[0]
@@ -217,118 +181,11 @@ class ExcelDataInput {
                 const v = await validation.getModel().create(validation)
                 proposal.validation = v
 
-                const f = await th.getModel().create(proposal)
+                fp = await th.getModel().create(proposal)
                 const ups = new UsableProposal()
                 ups.accountId = "5cc3fb57ceb3c45854b80e57"
-                ups.proposal = f
+                ups.proposal = fp
                 ups.getModel().create(ups)
-            }))
-
-        }
-    }
-
-    @test public async ucbModelData() {
-        PhLogger.info(`start input data with excel`)
-        const file = "test/data/ucb.xlsx"
-        const wb = XLSX.readFile(file)
-
-        /**
-         * 1. read hospital data in the excel
-         * and collect all the insertion ids
-         */
-        let hosps: Hospital[] = []
-        {
-            PhLogger.info(`1. read hospital data in the excel`)
-
-            const data = XLSX.utils.sheet_to_json(wb.Sheets.Hospital, { header: 2, defval: "" })
-
-            const jsonConvert: JsonConvert = new JsonConvert()
-            const th = new Hospital()
-            hosps = await Promise.all(data.map ( (x) => {
-                // jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
-                jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
-                jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
-                return th.getModel().create(jsonConvert.deserializeObject(x, Hospital))
-            }))
-        }
-
-        /**
-         * 2. read products data in the excel
-         * and colleect all the insertion ids
-         */
-        let products: Product[] = []
-        {
-            PhLogger.info(`2. read product data in the excel`)
-
-            const data = XLSX.utils.sheet_to_json(wb.Sheets.Product, { header: 2, defval: "" })
-
-            const jsonConvert: JsonConvert = new JsonConvert()
-            const th = new Product()
-            products = await Promise.all(data.map ( (x) => {
-                // jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
-                jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
-                jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
-                return th.getModel().create(jsonConvert.deserializeObject(x, Product))
-            }))
-        }
-
-        /**
-         * 3. read resources data in the excel
-         * and colleect all the insertion ids
-         */
-        let resources: Resource[] = []
-        {
-            PhLogger.info(`3. read resource data in the excel`)
-
-            const data = XLSX.utils.sheet_to_json(wb.Sheets.Resource, { header: 2, defval: "" })
-
-            const jsonConvert: JsonConvert = new JsonConvert()
-            const th = new Resource()
-            resources = await Promise.all(data.map ( (x) => {
-                // jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
-                jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
-                jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
-                return th.getModel().create(jsonConvert.deserializeObject(x, Resource))
-            }))
-        }
-
-        /**
-         * 4. read evaluation data in the excel
-         * and colleect all the insertion ids
-         */
-        let evls: Evaluation[] = []
-        {
-            PhLogger.info(`4. read evaluation data in the excel`)
-
-            const data = XLSX.utils.sheet_to_json(wb.Sheets.Evaluation, { header: 2, defval: "" })
-
-            const jsonConvert: JsonConvert = new JsonConvert()
-            const th = new Evaluation()
-            evls = await Promise.all(data.map ( (x) => {
-                // jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
-                jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
-                jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
-                return th.getModel().create(jsonConvert.deserializeObject(x, Evaluation))
-            }))
-        }
-
-        /**
-         * 5. read requirement data in the excel
-         * and colleect all the insertion ids
-         */
-        let reqs: Requirement[] = []
-        {
-            PhLogger.info(`5. read requirement data in the excel`)
-
-            const data = XLSX.utils.sheet_to_json(wb.Sheets.Requirement, { header: 2, defval: "" })
-
-            const jsonConvert: JsonConvert = new JsonConvert()
-            const th = new Requirement()
-            reqs = await Promise.all(data.map ( (x) => {
-                // jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
-                jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
-                jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
-                return th.getModel().create(jsonConvert.deserializeObject(x, Requirement))
             }))
         }
 
@@ -336,7 +193,7 @@ class ExcelDataInput {
          * 9. read preset data in the excel
          * and colleect all the insertion ids
          */
-        let presets: Preset[] = []
+        // let presets: Preset[] = []
         {
             PhLogger.info(`9. read preset data in the excel`)
 
@@ -344,7 +201,7 @@ class ExcelDataInput {
 
             const jsonConvert: JsonConvert = new JsonConvert()
             const th = new Preset()
-            presets = await Promise.all(data.map ( (x: any) => {
+            await Promise.all(data.map ( (x: any) => {
                 // jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
                 jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
                 jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
@@ -393,53 +250,10 @@ class ExcelDataInput {
                     item.product = op
                     item.resource = null
                 }
-
+                item.proposal = fp
+                // @ts-ignore
+                item.proposalId = fp._id.toString()
                 return th.getModel().create(item)
-            }))
-        }
-
-        /**
-         * 10. read proposal data in the excel
-         * and colleect all the insertion ids
-         */
-        {
-            PhLogger.info(`10. read proposal data in the excel`)
-
-            const data = XLSX.utils.sheet_to_json(wb.Sheets.Proposal, { header: 2, defval: "" })
-
-            const jsonConvert: JsonConvert = new JsonConvert()
-            const th = new Proposal()
-            const pls = await Promise.all(data.map ( async (x) => {
-                // jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
-                jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
-                jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
-                const proposal = jsonConvert.deserializeObject(x, Proposal)
-                proposal.targets = hosps
-                proposal.products = products
-                proposal.presets = presets
-                proposal.resources = resources
-                proposal.evaluations = evls
-                proposal.quota = reqs[0]
-
-                const validation = new Validation()
-                validation.inputType = "managementTimeInputType#Number*"
-                                     + "businessBudgetInputType#Number*"
-                                     + "businessSalesTargetInputType#Number*"
-                                     + "businessMeetingPlacesInputType#Number"
-                validation.maxValue = "managementMaxTime#100*"
-                                    + "managementMaxActionPoint#5*"
-                                    + "businessMaxBudget#200000*"
-                                    + "businessMaxSalesTarget#3700000*"
-                                    + "businessMaxMeetingPlaces#6"
-
-                const v = await validation.getModel().create(validation)
-                proposal.validation = v
-
-                const f = await th.getModel().create(proposal)
-                const ups = new UsableProposal()
-                ups.accountId = "5cc3fb57ceb3c45854b80e57"
-                ups.proposal = f
-                ups.getModel().create(ups)
             }))
         }
     }
