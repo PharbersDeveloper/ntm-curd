@@ -13,4 +13,7 @@ export class EnvConf {
     @JsonProperty("oauthApiNamespace", String)
     public oauthApiNamespace: string = undefined
 
+    @JsonProperty("kafkaBrokerList", String)
+    public kafkaBrokerList: string = undefined
+
 }

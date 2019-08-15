@@ -48,10 +48,12 @@ export default class AppDelegate {
 
         this.router.use((req, res, next) => {
             // Kafka Producer Demo
+
+            // const kafkaBrokerList = this.conf.env.kafkaBrokerList
             // const producer = new Kafka.Producer({
             //     "client.id": "ntm-curd",
             //     "dr_cb": true,
-            //     "metadata.broker.list": "192.168.100.174:29091",
+            //     "metadata.broker.list": kafkaBrokerList,
             //     // 'compression.codec': 'gzip',
             //     // 'retry.backoff.ms': 200,
             //     // 'message.send.max.retries': 10,

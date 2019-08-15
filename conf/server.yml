@@ -47,3 +47,4 @@ env:
   oauthHost: 192.168.100.174
   oauthPort: 9096
   oauthApiNamespace: "v0"
+  kafkaBrokerList: 192.168.100.174
