@@ -37,7 +37,7 @@ models:
     reg: regions
 mongo:
   algorithm: mongodb
-  host: 192.168.100.174
+  host: 192.168.100.176
   port: 27017
   username: alfredyang
   pwd: "12345"
@@ -47,3 +47,4 @@ env:
   oauthHost: 192.168.100.174
   oauthPort: 9096
   oauthApiNamespace: "v0"
+  kafkaBrokerList: 192.168.100.174

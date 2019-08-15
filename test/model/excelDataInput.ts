@@ -170,8 +170,10 @@ import Validation from "../../src/models/Validation"
                 proposal.quota = reqs[0]
 
                 const validation = new Validation()
-                validation.inputType = "managementTimeInputType#Number*businessBudgetInputType#Number*businessSalesTargetInputType#Number*businessMeetingPlacesInputType#Number"
-                validation.maxValue = "managementMaxTime#100*managementMaxActionPoint#5*businessMaxBudget#200000*businessMaxSalesTarget#3700000*businessMaxMeetingPlaces#6"
+                validation.inputType = "managementTimeInputType#Number*businessBudgetInputType#Number" +
+                "*businessSalesTargetInputType#Number*businessMeetingPlacesInputType#Number"
+                validation.maxValue = "managementMaxTime#100*managementMaxActionPoint#5*businessMaxBudget" +
+                "#200000*businessMaxSalesTarget#3700000*businessMaxMeetingPlaces#6"
                 const v = await validation.getModel().create(validation)
                 proposal.validation = v
 

@@ -45,13 +45,15 @@ export default class AppDelegate {
         this.app.use("/", this.router)
 
         // a middleware function with no mount path. This code is executed for every request to the router
-        
+
         this.router.use((req, res, next) => {
             // Kafka Producer Demo
+
+            // const kafkaBrokerList = this.conf.env.kafkaBrokerList
             // const producer = new Kafka.Producer({
             //     "client.id": "ntm-curd",
             //     "dr_cb": true,
-            //     "metadata.broker.list": "192.168.100.174:29091",
+            //     "metadata.broker.list": kafkaBrokerList,
             //     // 'compression.codec': 'gzip',
             //     // 'retry.backoff.ms': 200,
             //     // 'message.send.max.retries': 10,
@@ -98,8 +100,7 @@ export default class AppDelegate {
             //     PhLogger.error("Error from producer")
             //     PhLogger.error(err)
             // })
-            
-            
+
             // token验证请求及返回处理
             const auth = req.get("Authorization")
             if (auth === undefined) {
