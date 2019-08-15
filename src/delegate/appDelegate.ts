@@ -7,7 +7,7 @@ import API, { ResourceTypeRegistry } from "json-api"
 import { APIControllerOpts } from "json-api/build/src/controllers/API"
 import { JsonConvert, ValueCheckingMode } from "json2typescript"
 import mongoose = require("mongoose")
-// import Kafka from "node-rdkafka"
+import Kafka from "node-rdkafka"
 import { ServerConf } from "../configFactory/serverConf"
 import PhLogger from "../logger/phLogger"
 import { urlEncodeFilterParser } from "./urlEncodeFilterParser"
@@ -31,7 +31,7 @@ export default class AppDelegate {
     private conf: ServerConf
     private app = express()
     private router = express.Router()
-    // private kafka = Kafka
+    private kafka = Kafka
 
     public exec() {
         this.loadConfiguration()
@@ -45,7 +45,62 @@ export default class AppDelegate {
         this.app.use("/", this.router)
 
         // a middleware function with no mount path. This code is executed for every request to the router
+        
         this.router.use((req, res, next) => {
+            // Kafka Producer Demo
+            // const producer = new Kafka.Producer({
+            //     "client.id": "ntm-curd",
+            //     "dr_cb": true,
+            //     "metadata.broker.list": "192.168.100.174:29091",
+            //     // 'compression.codec': 'gzip',
+            //     // 'retry.backoff.ms': 200,
+            //     // 'message.send.max.retries': 10,
+            //     // 'socket.keepalive.enable': true,
+            //     // 'queue.buffering.max.messages': 100000,
+            //     // 'queue.buffering.max.ms': 1000,
+            //     // 'batch.num.messages': 1000000,
+            // })
+
+            // // Connect to the broker manually
+            // producer.connect()
+
+            // // Wait for the ready event before proceeding
+            // producer.on("ready", () => {
+            //     try {
+            //         producer.produce(
+            //         // Topic to send the message to
+            //         "test",
+            //         // optionally we can manually specify a partition for the message
+            //         // this defaults to -1 - which will use librdkafka's default partitioner
+            //         // (consistent random for keyed messages, random for unkeyed messages)
+            //         null,
+            //         // Message to send. Must be a buffer
+            //         Buffer.from("balabala1"),
+            //         // for keyed messages, we also specify the key - note that this field is optional
+            //         null,
+            //         // you can send a timestamp here. If your broker version supports it,
+            //         // it will get added. Otherwise, we default to 0
+            //         Date.now(),
+            //         // you can send an opaque token here, which gets passed along
+            //         // to your delivery reports
+            //         (err: any, offset: any) => {
+            //             PhLogger.error(err)
+            //             PhLogger.error(offset)
+            //         })
+            //     } catch (err) {
+            //         PhLogger.error("A problem occurred when sending our message")
+            //         PhLogger.error(err)
+            //     }
+            // })
+
+            // // Any errors we encounter, including connection errors
+            // producer.on("event.error", (err) => {
+            //     PhLogger.error("Error from producer")
+            //     PhLogger.error(err)
+            // })
+            
+            
+            // token验证请求及返回处理
             const auth = req.get("Authorization")
             if (auth === undefined) {
                 PhLogger.error("no auth")
@@ -57,7 +112,6 @@ export default class AppDelegate {
             const port = this.conf.env.oauthPort
             const namespace = this.conf.env.oauthApiNamespace
 
-            // token验证请求及返回处理
             axios.post(`http://${host}:${port}/${namespace}/TokenValidation`, null, {
                 headers: {
                     Authorization: auth,
@@ -68,9 +122,7 @@ export default class AppDelegate {
                     res.status(500).send(response.data)
                     return
                 } else {
-                    // res.status(500).send(this.kafka)
-                    return
-                    // next()
+                    next()
                 }
             }).catch((error) => {
                 PhLogger.error("auth error")
