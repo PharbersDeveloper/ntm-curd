@@ -8,11 +8,11 @@ import Hospital from "../../src/models/Hospital"
 import Preset from "../../src/models/Preset"
 import Product from "../../src/models/Product"
 import Proposal from "../../src/models/Proposal"
+import Report from "../../src/models/Report"
 import Requirement from "../../src/models/Requirement"
 import Resource from "../../src/models/Resource"
 import UsableProposal from "../../src/models/UsableProposal"
 import Validation from "../../src/models/Validation"
-import Report from "../../src/models/Report";
 
 @suite(timeout(1000 * 60), slow(1000))
 class ExcelDataInput {
@@ -32,7 +32,7 @@ class ExcelDataInput {
         const file = "test/data/tm.xlsx"
         await this.loadExcelData(file)
     }
-    
+
     @test public async ucbModelData() {
         PhLogger.info(`start input data with excel`)
         const file = "test/data/ucb.xlsx"
@@ -141,8 +141,6 @@ class ExcelDataInput {
                 return th.getModel().create(jsonConvert.deserializeObject(x, Requirement))
             }))
         }
-
-
 
         /**
          * 10. read proposal data in the excel
