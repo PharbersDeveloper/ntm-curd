@@ -1,13 +1,13 @@
 "use strict"
 
+// import Proposal from "./Proposal"
+import { JsonObject, JsonProperty } from "json2typescript"
 import { prop, Ref, Typegoose } from "typegoose"
 import { ReportCategory } from "../enum/ReportCategory"
 import Hospital from "./Hospital"
 import IModelBase from "./modelBase"
 import Product from "./Product"
 import Resource from "./Resource"
-// import Proposal from "./Proposal"
-import { JsonObject, JsonProperty } from "json2typescript"
 
 @JsonObject("Report")
 class Report extends Typegoose implements IModelBase<Report> {
@@ -47,30 +47,30 @@ class Report extends Typegoose implements IModelBase<Report> {
     @JsonProperty("phase", Number)
     @prop({ required: true, default: 0 })
     public phase?: number = 0
-    
+
     // @prop({ required: true, default: 0 })
     // public category?: number = 0
-    
+
     @JsonProperty("region", String)
     @prop({ required: false, default: "" })
     public region?: string = ""
-    
+
     @JsonProperty("potential", Number)
     @prop({ required: false, default: 0 })
     public potential?: number = 0
-    
+
     @JsonProperty("patientNum", Number)
     @prop({ required: false, default: 0 })
     public patientNum?: number = 0
-    
+
     @JsonProperty("drugEntrance", String)
     @prop({ required: false, default: "" })
     public drugEntrance?: string = ""
-    
+
     @JsonProperty("sales", Number)
     @prop({ required: false, default: 0 })
     public sales?: number = 0
-    
+
     @JsonProperty("salesContri", Number)
     @prop({ required: false, default: 0 })
     public salesContri?: number = 0
@@ -78,7 +78,7 @@ class Report extends Typegoose implements IModelBase<Report> {
     @JsonProperty("quota", Number)
     @prop({ required: false, default: 0 })
     public salesQuota?: number = 0
-    
+
     @JsonProperty("quotaGrowthMOM", Number)
     @prop({ required: false, default: 0 })
     public quotaGrowthMOM?: number = 0
@@ -86,7 +86,7 @@ class Report extends Typegoose implements IModelBase<Report> {
     @JsonProperty("quotaContri", Number)
     @prop({ required: false, default: 0 })
     public quotaContri?: number = 0
-    
+
     @JsonProperty("share", Number)
     @prop({ required: false, default: 0 })
     public share?: number = 0
@@ -94,11 +94,11 @@ class Report extends Typegoose implements IModelBase<Report> {
     @JsonProperty("salesGrowthYOY", Number)
     @prop({ required: false, default: 0 })
     public salesGrowthYOY?: number = 0
-    
+
     @JsonProperty("salesGrowthMOM", Number)
     @prop({ required: false, default: 0 })
     public salesGrowthMOM?: number = 0
-    
+
     @JsonProperty("quotaAchievement", Number)
     @prop({ required: false, default: 0 })
     public achievements?: number = 0

@@ -47,4 +47,8 @@ env:
   oauthHost: 192.168.100.174
   oauthPort: 9096
   oauthApiNamespace: "v0"
-  kafkaBrokerList: 192.168.100.174
+  kafkaBrokerList: "59.110.31.50:9092"
+  kafkaTopic: "test"
+  kafkaSecretsDir: "/Users/sunchenghao/secrets/"
+  kafkaPassword: "pharbers"
+  schemaRegisterHost: "59.110.31.50:8081"
