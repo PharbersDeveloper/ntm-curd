@@ -11,8 +11,11 @@ import { JsonObject, JsonProperty } from "json2typescript"
 
 @JsonObject("Report")
 class Report extends Typegoose implements IModelBase<Report> {
+    @JsonProperty("category", String)
     @prop({ enum: ReportCategory, required: true })
     public category: ReportCategory = ReportCategory.Hospital
+    // @prop({ required: true, default: "" })
+    // public category: string = ""
 
     // @prop({ref: Proposal, default: null})
     // public proposal?: Ref<Proposal>
