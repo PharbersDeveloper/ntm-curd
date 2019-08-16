@@ -41,7 +41,7 @@ mongo:
   port: 27017
   username: alfredyang
   pwd: "12345"
-  coll: "pharbers-ntm-client-3"
+  coll: "pharbers-ntm-client-2"
   auth: false
 env:
   oauthHost: 192.168.100.174

@@ -96,11 +96,11 @@ class Preset extends Typegoose implements IModelBase<Preset> {
     @JsonProperty("patientNum", Number)
     @prop({ required: false, default: 0 })
     public patientNum?: number = 0
-    
+
     @JsonProperty("ytd", Number)
     @prop({ required: false, default: 0 })
     public ytd?: number = 0
-    
+
     @JsonProperty("lySales", Number)
     @prop({ required: false, default: 0 })
     public lySales?: number = 0

@@ -95,10 +95,37 @@ export default class AppDelegate {
 
         this.router.post("/callR", (req, res, next) => {
 
+            PhLogger.info(req.body.callr)
             PhLogger.info(req.body.type)
             PhLogger.info(req.body.periodId)
             PhLogger.info(req.body.projectId)
             PhLogger.info(req.body.proposalId)
+
+            // 临时R计算
+            axios.post("http://192.168.100.195:8080/spark/job/run", {
+                config: {
+                    bucketName: "pharbers-resources",
+                    config: {
+                        periodId: req.body.periodId,
+                        projectId: req.body.projectId,
+                        proposalId: req.body.proposalId,
+                    },
+                    mode: req.body.type,
+                    name: "testTM",
+                    ossKey: req.body.callr ? "TMtest0815.json" : "TMMongo2EsJob.json",
+                    topic: "testTM",
+                },
+                id: this.uuidv4(),
+            }).then((response) => {
+                PhLogger.info("R ok")
+                res.status(200).send(response.data)
+                return
+            }).catch((error) => {
+                PhLogger.error("R error")
+                PhLogger.error(error)
+                res.status(500).send(error)
+                return
+            })
 
             // // Kafka Producer Demo
 
@@ -218,32 +245,6 @@ export default class AppDelegate {
             //     PhLogger.error("Error from producer")
             //     PhLogger.error(err)
             // })
-
-            // 临时R计算
-            axios.post("http://192.168.100.195:8080/spark/job/run", {
-                config: {
-                    bucketName: "pharbers-resources",
-                    config: {
-                        periodId: req.body.periodId,
-                        projectId: req.body.projectId,
-                        proposalId: req.body.proposalId,
-                    },
-                    mode: req.body.type,
-                    name: "testTM",
-                    ossKey: "TMtest0815.json",
-                    topic: "testTM",
-                },
-                id: this.uuidv4(),
-            }).then((response) => {
-                PhLogger.info("R ok")
-                res.status(200).send(response.data)
-                return
-            }).catch((error) => {
-                PhLogger.error("R error")
-                PhLogger.error(error)
-                res.status(500).send(error)
-                return
-            })
 
         })
 
