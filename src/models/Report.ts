@@ -103,6 +103,26 @@ class Report extends Typegoose implements IModelBase<Report> {
     @prop({ required: false, default: 0 })
     public achievements?: number = 0
 
+    @JsonProperty("territoryManagementAbility", Number)
+    @prop({ required: false, default: 0 })
+    public territoryManagementAbility?: number = 0 // p_territory_management_ability
+
+    @JsonProperty("salesSkills", Number)
+    @prop({ required: false, default: 0 })
+    public salesSkills?: number = 0 // p_sales_skills
+
+    @JsonProperty("productKnowledge", Number)
+    @prop({ required: false, default: 0 })
+    public productKnowledge?: number = 0 // p_product_knowledge
+
+    @JsonProperty("behaviorEfficiency", Number)
+    @prop({ required: false, default: 0 })
+    public behaviorEfficiency?: number = 0// p_behavior_efficiency
+
+    @JsonProperty("workMotivation", Number)
+    @prop({ required: false, default: 0 })
+    public workMotivation?: number = 0 // p_work_motivation
+
     public getModel() {
         return this.getModelForClass(Report)
     }

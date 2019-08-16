@@ -5,6 +5,7 @@ import XLSX = require("xlsx")
 import PhLogger from "../../src/logger/phLogger"
 import Evaluation from "../../src/models/Evaluation"
 import Hospital from "../../src/models/Hospital"
+import Image from "../../src/models/Image"
 import Preset from "../../src/models/Preset"
 import Product from "../../src/models/Product"
 import Proposal from "../../src/models/Proposal"
@@ -14,12 +15,12 @@ import Resource from "../../src/models/Resource"
 import UsableProposal from "../../src/models/UsableProposal"
 import Validation from "../../src/models/Validation"
 
-@suite(timeout(1000 * 60), slow(1000))
+@suite(timeout(1000 * 60), slow(2000))
 class ExcelDataInput {
 
     public static before() {
         PhLogger.info(`before starting the test`)
-        mongoose.connect("mongodb://192.168.100.176:27017/pharbers-ntm-client-4")
+        mongoose.connect("mongodb://192.168.100.176:27017/pharbers-ntm-client-5")
     }
 
     public static after() {
@@ -43,6 +44,43 @@ class ExcelDataInput {
         const wb = XLSX.readFile(file)
 
         /**
+         * 0. set avatar data
+         */
+        let images: Image[] = []
+        {
+            const th = new Image()
+            const jsonConvert: JsonConvert = new JsonConvert()
+            jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
+            jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
+
+            const hospAvatar = jsonConvert.deserializeObject({
+                flag : 1,
+                img : "https://i.loli.net/2019/04/15/5cb4650d82019.jpg",
+                tag : "医院",
+            }, Image)
+
+            const resourceAvatar = jsonConvert.deserializeObject({
+                flag : 1,
+                img : "https://i.loli.net/2019/04/15/5cb465ec5415d.png",
+                tag : "代表",
+            }, Image)
+
+            const productAvatar = jsonConvert.deserializeObject({
+                flag : 1,
+                img : "https://i.loli.net/2019/04/16/5cb52d5a92f37.png",
+                tag : "商品",
+            }, Image)
+
+            images =
+            [
+                await th.getModel().create(hospAvatar),
+                await th.getModel().create(resourceAvatar),
+                await th.getModel().create(productAvatar)
+            ]
+
+        }
+
+        /**
          * 1. read hospital data in the excel
          * and collect all the insertion ids
          */
@@ -58,7 +96,9 @@ class ExcelDataInput {
                 // jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
                 jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
                 jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
-                return th.getModel().create(jsonConvert.deserializeObject(x, Hospital))
+                const tmp = jsonConvert.deserializeObject(x, Hospital)
+                tmp.avatar = images.find((y) => y.tag === "医院")
+                return th.getModel().create(tmp)
             }))
         }
 
@@ -78,7 +118,9 @@ class ExcelDataInput {
                 // jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
                 jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
                 jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
-                return th.getModel().create(jsonConvert.deserializeObject(x, Product))
+                const tmp = jsonConvert.deserializeObject(x, Product)
+                tmp.avatar = images.find((y) => y.tag === "商品")
+                return th.getModel().create(tmp)
             }))
         }
 
@@ -98,7 +140,9 @@ class ExcelDataInput {
                 // jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
                 jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
                 jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
-                return th.getModel().create(jsonConvert.deserializeObject(x, Resource))
+                const tmp = jsonConvert.deserializeObject(x, Resource)
+                tmp.avatar = images.find((y) => y.tag === "代表")
+                return th.getModel().create(tmp)
             }))
         }
 
