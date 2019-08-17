@@ -1,5 +1,6 @@
 "use strict"
 import { arrayProp, prop, Ref, Typegoose } from "typegoose"
+import Final from "./Final"
 import IModelBase from "./modelBase"
 import Period from "./Period"
 import Proposal from "./Proposal"
@@ -33,8 +34,11 @@ class Project extends Typegoose implements IModelBase<Project> {
     @arrayProp({ itemsRef: Period, required: true })
     public periods: Array<Ref<Period>>
 
-    @arrayProp({ itemsRef: Result, required: true })
-    public results: Array<Ref<Result>>
+    // @arrayProp({ itemsRef: Result, required: true })
+    // public results: Array<Ref<Result>>
+
+    @prop({ ref: Final, required: true, default: null })
+    public finals: Ref<Final>
 
     public getModel() {
         return this.getModelForClass(Project)

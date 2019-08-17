@@ -353,11 +353,13 @@ class ExcelDataInput {
                 if (item.category === "Hospital") {
                     const hospName: string = x.hospital
                     const productName: string = x.product
+                    const resourceName: string = x.resource
                     const oh = hosps.find((y) => y.name === hospName)
                     const op = products.find((y) => y.name === productName)
+                    const rs = resources.find((y) => y.name === resourceName)
                     item.hospital = oh
                     item.product = op
-                    item.resource = null
+                    item.resource = rs
                 }
 
                 if (item.category === "Resource") {

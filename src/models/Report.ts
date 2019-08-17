@@ -96,7 +96,7 @@ class Report extends Typegoose implements IModelBase<Report> {
     @JsonProperty("quotaAchievement", Number)
     @prop({ required: false, default: 0 })
     public achievements?: number = 0
-    
+
     @JsonProperty("ytd", Number)
     @prop({ required: false, default: 0 })
     public ytd?: number = 0
