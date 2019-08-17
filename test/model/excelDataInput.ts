@@ -324,7 +324,7 @@ class ExcelDataInput {
                 item.hospital = oh
                 item.product = null
                 item.resource = null
-                
+
                 item.proposal = fp
                 // @ts-ignore
                 item.proposalId = fp._id.toString()

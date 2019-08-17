@@ -18,10 +18,10 @@ class Preset extends Typegoose implements IModelBase<Preset> {
 
     @prop({ required: false, default: "" })
     public projectId?: string
-    
+
     @prop({ required: false, default: "" })
     public periodId?: string
-    
+
     @prop({ref: Product, required: true, default: null })
     public product?: Ref<Product>
 
@@ -92,7 +92,7 @@ class Preset extends Typegoose implements IModelBase<Preset> {
     public currentClsADoctorVT?: number = 0 // p_high_target
 
     @JsonProperty("currentClsBDoctorVT", Number)
-    @prop({ required:false, default: 0 })
+    @prop({ required: false, default: 0 })
     public currentClsBDoctorVT?: number = 0 // p_middle_target
 
     @JsonProperty("currentClsADoctorVT", Number)
@@ -110,6 +110,14 @@ class Preset extends Typegoose implements IModelBase<Preset> {
     @JsonProperty("currentPolicy", String, false)
     @prop({ required: false, default: "" })
     public currentPolicy?: string = ""
+
+    @JsonProperty("lastBudget", Number)
+    @prop({ required: false, default: 0 })
+    public lastBudget?: number = 0
+
+    @JsonProperty("initBudget", Number)
+    @prop({ required: false, default: 0 })
+    public initBudget?: number = 0
 
     public getModel() {
         return this.getModelForClass(Preset)

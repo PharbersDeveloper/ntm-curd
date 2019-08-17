@@ -1,7 +1,7 @@
 "use strict"
+import { JsonObject, JsonProperty } from "json2typescript"
 import { prop, Ref, Typegoose } from "typegoose"
 import IModelBase from "./modelBase"
-import { JsonObject, JsonProperty } from "json2typescript"
 
 @JsonObject("Evaluation")
 class Region extends Typegoose implements IModelBase<Region> {
@@ -11,7 +11,7 @@ class Region extends Typegoose implements IModelBase<Region> {
 
     @JsonProperty("level", String)
     @prop({ required: true, default: "" })
-    public level: string = "" 
+    public level: string = ""
 
     @JsonProperty("strategyPosition", String)
     @prop({ required: true })
