@@ -16,6 +16,12 @@ class Preset extends Typegoose implements IModelBase<Preset> {
     @prop({ required: false, default: "" })
     public proposalId?: string
 
+    @prop({ required: false, default: "" })
+    public projectId?: string
+    
+    @prop({ required: false, default: "" })
+    public periodId?: string
+    
     @prop({ref: Product, required: true, default: null })
     public product?: Ref<Product>
 

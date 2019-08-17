@@ -7,8 +7,8 @@ import Report from "./Report"
 
 class Period extends Typegoose implements IModelBase<Period> {
 
-    @prop( { ref: Period, default: null} )
-    public last?: Ref<Period>
+    @prop({ required: true, default: 0 })
+    public phase: number = 0
 
     @prop({ required: true })
     public name: string
