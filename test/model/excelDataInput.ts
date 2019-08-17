@@ -20,7 +20,7 @@ class ExcelDataInput {
 
     public static before() {
         PhLogger.info(`before starting the test`)
-        mongoose.connect("mongodb://192.168.100.176:27017/pharbers-ntm-client-5")
+        mongoose.connect("mongodb://192.168.100.176:27017/pharbers-ntm-client-10")
     }
 
     public static after() {
@@ -187,12 +187,12 @@ class ExcelDataInput {
         }
 
         /**
-         * 10. read proposal data in the excel
+         * 6. read proposal data in the excel
          * and colleect all the insertion ids
          */
         let fp: Proposal
         {
-            PhLogger.info(`10. read proposal data in the excel`)
+            PhLogger.info(`6. read proposal data in the excel`)
 
             const data = XLSX.utils.sheet_to_json(wb.Sheets.Proposal, { header: 2, defval: "" })
 
@@ -233,12 +233,12 @@ class ExcelDataInput {
         }
 
         /**
-         * 9. read preset data in the excel
+         * 7. read preset data in the excel
          * and colleect all the insertion ids
          */
         // let presets: Preset[] = []
         {
-            PhLogger.info(`9. read preset data in the excel`)
+            PhLogger.info(`7. read preset data in the excel`)
 
             const data = XLSX.utils.sheet_to_json(wb.Sheets.Preset, { header: 2, defval: "" })
 
@@ -301,7 +301,39 @@ class ExcelDataInput {
         }
 
         /**
-         * 8. read report data in the excel
+         * 8. read policy data in the excel
+         * and colleect all the insertion ids
+         */
+        // let presets: Preset[] = []
+        {
+            PhLogger.info(`8. read preset data in the excel`)
+
+            const data = XLSX.utils.sheet_to_json(wb.Sheets.Policy, { header: 2, defval: "" })
+
+            const jsonConvert: JsonConvert = new JsonConvert()
+            const th = new Preset()
+            await Promise.all(data.map ( (x: any) => {
+                // jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
+                jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
+                jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
+
+                const item = jsonConvert.deserializeObject(x, Preset)
+                item.category = 32 // policy
+                const hospName: string = x.hospital
+                const oh = hosps.find((y) => y.name === hospName)
+                item.hospital = oh
+                item.product = null
+                item.resource = null
+                
+                item.proposal = fp
+                // @ts-ignore
+                item.proposalId = fp._id.toString()
+                return th.getModel().create(item)
+            }))
+        }
+
+        /**
+         * 9. read report data in the excel
          * and colleect all the insertion ids
          */
         // let presets: Preset[] = []
@@ -346,15 +378,15 @@ class ExcelDataInput {
                     item.resource = null
                 }
 
-                // if (item.category & 8 /*PresetCategory.Protental*/) {
-                //     const hospName: string = x.hospital
-                //     const productName: string = x.product
-                //     const op = products.find((y) => y.name === productName)
-                //     const oh = hosps.find((y) => y.name === hospName)
-                //     item.hospital = oh
-                //     item.product = op
-                //     item.resource = null
-                // }
+                if (item.category === "Region" ) {
+                    const productName: string = x.product
+                    const resourceName: string = x.resource
+                    const op = products.find((y) => y.name === productName)
+                    const rs = resources.find((y) => y.name === resourceName)
+                    item.hospital = null
+                    item.product = op
+                    item.resource = rs
+                }
 
                 // if (item.category & 16 /*PresetCategory.Share*/) {
                 //     const productName: string = x.product

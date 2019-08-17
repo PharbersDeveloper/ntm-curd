@@ -1,25 +1,33 @@
 "use strict"
 import { prop, Ref, Typegoose } from "typegoose"
 import IModelBase from "./modelBase"
+import { JsonObject, JsonProperty } from "json2typescript"
 
+@JsonObject("Evaluation")
 class Region extends Typegoose implements IModelBase<Region> {
-    @prop({ required: true })
-    public name: string
+    @JsonProperty("name", String)
+    @prop({ required: true, default: "" })
+    public name: string = ""
 
-    @prop({ required: true })
-    public type: number
+    @JsonProperty("level", String)
+    @prop({ required: true, default: "" })
+    public level: string = "" 
 
+    @JsonProperty("strategyPosition", String)
     @prop({ required: true })
-    public strategyPosition: number
+    public strategyPosition: string = ""
 
-    @prop({ required: true })
-    public localPatient: number
+    @JsonProperty("localPatient", Number)
+    @prop({ required: true, default: 0.0 })
+    public localPatient: number = 0.0
 
-    @prop({ required: true })
-    public outsidePatient: number
+    @JsonProperty("outsidePatient", Number)
+    @prop({ required: true, default: 0.0 })
+    public outsidePatient: number = 0.0
 
-    @prop({ required: true })
-    public patientNum: number
+    @JsonProperty("patientNum", Number)
+    @prop({ required: true, default: 0.0 })
+    public patientNum: number = 0.0
 
     public getModel() {
         return this.getModelForClass(Region)
