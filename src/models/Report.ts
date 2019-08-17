@@ -14,23 +14,12 @@ class Report extends Typegoose implements IModelBase<Report> {
     @JsonProperty("category", String)
     @prop({ enum: ReportCategory, required: true })
     public category: ReportCategory = ReportCategory.Hospital
-    // @prop({ required: true, default: "" })
-    // public category: string = ""
-
-    // @prop({ref: Proposal, default: null})
-    // public proposal?: Ref<Proposal>
 
     @prop({ default: "" })
     public proposalId?: string = ""
 
-    // @prop({ref: Proposal, default: null})
-    // public proposal?: Ref<Proposal>
-
     @prop({ default: "" })
     public projectId?: string = ""
-
-    // @prop({ref: Proposal, default: null})
-    // public proposal?: Ref<Proposal>
 
     @prop({ default: "" })
     public periodId?: string = ""
@@ -48,24 +37,29 @@ class Report extends Typegoose implements IModelBase<Report> {
     @prop({ required: true, default: 0 })
     public phase?: number = 0
 
-    // @prop({ required: true, default: 0 })
-    // public category?: number = 0
-
     @JsonProperty("region", String)
     @prop({ required: false, default: "" })
     public region?: string = ""
 
-    @JsonProperty("potential", Number)
-    @prop({ required: false, default: 0 })
-    public potential?: number = 0
+    // 写到下期
+    // @JsonProperty("potential", Number)
+    // @prop({ required: false, default: 0 })
+    // public potential?: number = 0
 
-    @JsonProperty("patientNum", Number)
-    @prop({ required: false, default: 0 })
-    public patientNum?: number = 0
+    // 写到下期
+    // @JsonProperty("patientNum", Number)
+    // @prop({ required: false, default: 0 })
+    // public patientNum?: number = 0
 
-    @JsonProperty("drugEntrance", String)
-    @prop({ required: false, default: "" })
-    public drugEntrance?: string = ""
+    // 写到下期
+    // @JsonProperty("drugEntrance", String)
+    // @prop({ required: false, default: "" })
+    // public drugEntrance?: string = ""
+
+    // 写到下期
+    // @JsonProperty("budget", Number)
+    // @prop({ required: false, default: 0 })
+    // public budget?: number = 0
 
     @JsonProperty("sales", Number)
     @prop({ required: false, default: 0 })
@@ -102,26 +96,10 @@ class Report extends Typegoose implements IModelBase<Report> {
     @JsonProperty("quotaAchievement", Number)
     @prop({ required: false, default: 0 })
     public achievements?: number = 0
-
-    @JsonProperty("territoryManagementAbility", Number)
+    
+    @JsonProperty("ytd", Number)
     @prop({ required: false, default: 0 })
-    public territoryManagementAbility?: number = 0 // p_territory_management_ability
-
-    @JsonProperty("salesSkills", Number)
-    @prop({ required: false, default: 0 })
-    public salesSkills?: number = 0 // p_sales_skills
-
-    @JsonProperty("productKnowledge", Number)
-    @prop({ required: false, default: 0 })
-    public productKnowledge?: number = 0 // p_product_knowledge
-
-    @JsonProperty("behaviorEfficiency", Number)
-    @prop({ required: false, default: 0 })
-    public behaviorEfficiency?: number = 0// p_behavior_efficiency
-
-    @JsonProperty("workMotivation", Number)
-    @prop({ required: false, default: 0 })
-    public workMotivation?: number = 0 // p_work_motivation
+    public ytd?: number = 0
 
     public getModel() {
         return this.getModelForClass(Report)
