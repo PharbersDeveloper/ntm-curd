@@ -27,8 +27,6 @@ models:
     reg: presets
   - file: Result
     reg: results
-  - file: Level
-    reg: levels
   - file: Evaluation
     reg: evaluations
   - file: Validation
