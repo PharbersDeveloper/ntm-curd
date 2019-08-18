@@ -54,3 +54,4 @@ env:
   kafkaSecretsDir: "/Users/sunchenghao/secrets/"
   kafkaPassword: "pharbers"
   schemaRegisterHost: "59.110.31.50:8081"
+  httpCallUrl: "http://192.168.100.195:8080/spark/job/run"

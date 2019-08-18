@@ -27,4 +27,8 @@ export class EnvConf {
 
     @JsonProperty("schemaRegisterHost", String)
     public schemaRegisterHost: string = undefined
+
+    @JsonProperty("httpCallUrl", String)
+    public httpCallUrl: string = undefined
+
 }

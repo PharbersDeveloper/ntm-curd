@@ -95,6 +95,8 @@ export default class AppDelegate {
 
         this.router.post("/callR", (req, res, next) => {
 
+            // 临时R计算
+
             PhLogger.info(req.body.callr)
             PhLogger.info(req.body.type)
             PhLogger.info(req.body.periodId)
@@ -112,8 +114,9 @@ export default class AppDelegate {
                     jsonFile = "TMMongo2EsJob.json"
                 }
 
-            // 临时R计算
-            axios.post("http://192.168.100.195:8080/spark/job/run", {
+            const httpCallUrl = this.conf.env.httpCallUrl
+
+            axios.post(httpCallUrl, {
                 config: {
                     bucketName: "pharbers-resources",
                     config: {
