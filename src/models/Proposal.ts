@@ -30,6 +30,14 @@ class Proposal extends Typegoose implements IModelBase<Proposal> {
     @prop({ required: true })
     public case: string = ""
 
+    @JsonProperty("periodStep", String)
+    @prop({ required: true })
+    public periodStep: string = ""
+
+    @JsonProperty("periodBase", Number)
+    @prop({ required: true })
+    public periodBase: number = 0
+
     @arrayProp( { itemsRef: Product, required: false, default: [] } )
     public products: Array<Ref<Product>>
 

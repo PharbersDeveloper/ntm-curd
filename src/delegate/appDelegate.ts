@@ -100,6 +100,17 @@ export default class AppDelegate {
             PhLogger.info(req.body.periodId)
             PhLogger.info(req.body.projectId)
             PhLogger.info(req.body.proposalId)
+            PhLogger.info(req.body.phase)
+
+            let jsonFile = ""
+
+            if (req.body.type === "tmr") {
+                    jsonFile = "TMCal.json"
+                } else if (req.body.type === "ucbr") {
+                    jsonFile = "UCBCal.json"
+                } else {
+                    jsonFile = "TMMongo2EsJob.json"
+                }
 
             // 临时R计算
             axios.post("http://192.168.100.195:8080/spark/job/run", {
@@ -107,12 +118,13 @@ export default class AppDelegate {
                     bucketName: "pharbers-resources",
                     config: {
                         periodId: req.body.periodId,
+                        phase: req.body.phase,
                         projectId: req.body.projectId,
                         proposalId: req.body.proposalId,
                     },
                     mode: req.body.type,
                     name: "testTM",
-                    ossKey: req.body.callr ? "TMtest0815.json" : "TMMongo2EsJob.json",
+                    ossKey: jsonFile,
                     topic: "testTM",
                 },
                 id: this.uuidv4(),
