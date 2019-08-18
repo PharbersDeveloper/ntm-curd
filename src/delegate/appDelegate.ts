@@ -7,7 +7,7 @@ import * as yaml from "js-yaml"
 import API, { ResourceTypeRegistry } from "json-api"
 import { APIControllerOpts } from "json-api/build/src/controllers/API"
 import { JsonConvert, ValueCheckingMode } from "json2typescript"
-import kafkaAvro = require("kafka-avro")
+// import kafkaAvro = require("kafka-avro")
 import mongoose = require("mongoose")
 // import kafka from "node-rdkafka"
 import { ServerConf } from "../configFactory/serverConf"
