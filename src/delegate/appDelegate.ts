@@ -74,7 +74,7 @@ export default class AppDelegate {
             const port = this.conf.env.oauthPort
             const namespace = this.conf.env.oauthApiNamespace
 
-            axios.post(`http://${host}:${port}/${namespace}/TokenValidation`, null, {
+            axios.post(`http://${host}${port}/${namespace}/TokenValidation`, null, {
                 headers: {
                     Authorization: auth,
                 },

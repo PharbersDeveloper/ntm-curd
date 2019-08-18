@@ -7,8 +7,8 @@ export class EnvConf {
     @JsonProperty("oauthHost", String)
     public oauthHost: string = undefined
 
-    @JsonProperty("oauthPort", Number)
-    public oauthPort: number = undefined
+    @JsonProperty("oauthPort", String)
+    public oauthPort: string = undefined
 
     @JsonProperty("oauthApiNamespace", String)
     public oauthApiNamespace: string = undefined
