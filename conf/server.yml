@@ -46,7 +46,7 @@ mongo:
   coll: "pharbers-ntm-client"
   auth: false
 env:
-  oauthHost: pharbers.com
+  oauthHost: oauth.pharbers.com
   oauthPort: ""
   oauthApiNamespace: "v0"
   kafkaBrokerList: "59.110.31.50:9092"
