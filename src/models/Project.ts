@@ -37,7 +37,7 @@ class Project extends Typegoose implements IModelBase<Project> {
     // @arrayProp({ itemsRef: Result, required: true })
     // public results: Array<Ref<Result>>
 
-    @arrayProp({ itemsRef: Final, required: true, default: null })
+    @arrayProp({ itemsRef: Final, required: true })
     public finals: Array<Ref<Final>>
 
     public getModel() {
