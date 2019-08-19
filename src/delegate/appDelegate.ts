@@ -1,13 +1,15 @@
 "use strict"
 import axios from "axios"
+import bodyParser from "body-parser"
 import express from "express"
 import * as fs from "fs"
 import * as yaml from "js-yaml"
 import API, { ResourceTypeRegistry } from "json-api"
 import { APIControllerOpts } from "json-api/build/src/controllers/API"
 import { JsonConvert, ValueCheckingMode } from "json2typescript"
+// import kafkaAvro = require("kafka-avro")
 import mongoose = require("mongoose")
-// import Kafka from "node-rdkafka"
+// import kafka from "node-rdkafka"
 import { ServerConf } from "../configFactory/serverConf"
 import PhLogger from "../logger/phLogger"
 import { urlEncodeFilterParser } from "./urlEncodeFilterParser"
@@ -41,11 +43,26 @@ export default class AppDelegate {
         this.listen2Port(8080)
     }
 
+    protected uuidv4() {
+        return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+            const r = Math.random() * 16 | 0
+            const v = c === "x" ? r : (r & 0x3 | 0x8)
+            return v.toString(16)
+        })
+    }
+
     protected configMiddleware() {
-        this.app.use("/", this.router)
+
+        this.app.use(bodyParser.json())
+        this.app.use( bodyParser.urlencoded( {
+            extended: true
+        } ) )
 
         // a middleware function with no mount path. This code is executed for every request to the router
         this.router.use((req, res, next) => {
+
+            // token验证请求及返回处理
+
             const auth = req.get("Authorization")
             if (auth === undefined) {
                 PhLogger.error("no auth")
@@ -57,8 +74,7 @@ export default class AppDelegate {
             const port = this.conf.env.oauthPort
             const namespace = this.conf.env.oauthApiNamespace
 
-            // token验证请求及返回处理
-            axios.post(`http://${host}:${port}/${namespace}/TokenValidation`, null, {
+            axios.post(`http://${host}${port}/${namespace}/TokenValidation`, null, {
                 headers: {
                     Authorization: auth,
                 },
@@ -68,9 +84,7 @@ export default class AppDelegate {
                     res.status(500).send(response.data)
                     return
                 } else {
-                    // res.status(500).send(this.kafka)
-                    return
-                    // next()
+                    next()
                 }
             }).catch((error) => {
                 PhLogger.error("auth error")
@@ -78,6 +92,178 @@ export default class AppDelegate {
                 return
             })
         })
+
+        this.router.post("/callR", (req, res, next) => {
+
+            // 临时R计算
+
+            PhLogger.info(req.body.callr)
+            PhLogger.info(req.body.type)
+            PhLogger.info(req.body.periodId)
+            PhLogger.info(req.body.projectId)
+            PhLogger.info(req.body.proposalId)
+            PhLogger.info(req.body.phase)
+
+            let jsonFile = ""
+
+            if (req.body.type === "tmr") {
+                    jsonFile = "TMCal.json"
+                } else if (req.body.type === "ucbr") {
+                    jsonFile = "UCBCal.json"
+                } else {
+                    jsonFile = "TMMongo2EsJob.json"
+                }
+
+            const httpCallUrl = this.conf.env.httpCallUrl
+
+            axios.post(httpCallUrl, {
+                config: {
+                    bucketName: "pharbers-resources",
+                    config: {
+                        periodId: req.body.periodId,
+                        phase: req.body.phase,
+                        projectId: req.body.projectId,
+                        proposalId: req.body.proposalId,
+                    },
+                    mode: req.body.type,
+                    name: "testTM",
+                    ossKey: jsonFile,
+                    topic: "testTM",
+                },
+                id: this.uuidv4(),
+            }).then((response) => {
+                PhLogger.info("R ok")
+                res.status(200).send(response.data)
+                return
+            }).catch((error) => {
+                PhLogger.error("R error")
+                PhLogger.error(error)
+                res.status(500).send(error)
+                return
+            })
+
+            // // Kafka Producer Demo
+
+            // const kafkaBrokerList = this.conf.env.kafkaBrokerList
+            // const kafkaTopic = this.conf.env.kafkaTopic
+            // const kafkaSecretsDir = this.conf.env.kafkaSecretsDir
+            // const kafkaPassword = this.conf.env.kafkaPassword
+            // const schemaRegisterHost = this.conf.env.schemaRegisterHost
+
+            // const avro = new kafkaAvro({
+            //     kafkaBroker: kafkaBrokerList,
+            //     schemaRegistry: schemaRegisterHost,
+            // })
+
+            // avro.init()
+            // kafkaAvro.getProducer({
+            //     "client.id": "ntm-curd",
+            //     "dr_cb": true,
+            //     "metadata.broker.list": kafkaBrokerList,
+            //     "security.protocol": "SSL",
+            //     "ssl.ca.location": `${kafkaSecretsDir}snakeoil-ca-1.crt`,
+            //     "ssl.certificate.location": `${kafkaSecretsDir}kafkacat-ca1-signed.pem`,
+            //     "ssl.key.location": `${kafkaSecretsDir}kafkacat.client.key`,
+            //     "ssl.key.password": kafkaPassword,
+            // })
+            //     // "getProducer()" returns a Bluebird Promise.
+            //     .then((producer: any) => {
+
+            //         producer.on("disconnected", (arg: any) => {
+            //             PhLogger.error("producer disconnected. " + JSON.stringify(arg))
+            //         })
+
+            //         const value = { name: "John" }
+
+            //         // if partition is set to -1, librdkafka will use the default partitioner
+            //         const partition = -1
+            //         try {
+            //             producer.produce(
+            //             // Topic to send the message to
+            //             kafkaTopic,
+            //             // optionally we can manually specify a partition for the message
+            //             // this defaults to -1 - which will use librdkafka's default partitioner
+            //             // (consistent random for keyed messages, random for unkeyed messages)
+            //             partition,
+            //             // Message to send. Must be a buffer
+            //             // Buffer.from("balabala1"),
+            //             value,
+            //             // for keyed messages, we also specify the key - note that this field is optional
+            //             null,
+            //             // you can send a timestamp here. If your broker version supports it,
+            //             // it will get added. Otherwise, we default to 0
+            //             Date.now(),
+            //             // you can send an opaque token here, which gets passed along
+            //             // to your delivery reports
+            //             (err: any, offset: any) => {
+            //                 PhLogger.error(err)
+            //                 PhLogger.error(offset)
+            //             })
+            //         } catch (err) {
+            //             PhLogger.error("A problem occurred when sending our message")
+            //             PhLogger.error(err)
+            //         }
+            //     })
+
+            // const producer = new kafka.Producer({
+            //     "client.id": "ntm-curd",
+            //     "dr_cb": true,
+            //     "metadata.broker.list": kafkaBrokerList,
+            //     "security.protocol": "SSL",
+            //     "ssl.ca.location": `${kafkaSecretsDir}snakeoil-ca-1.crt`,
+            //     "ssl.certificate.location": `${kafkaSecretsDir}kafkacat-ca1-signed.pem`,
+            //     "ssl.key.location": `${kafkaSecretsDir}kafkacat.client.key`,
+            //     "ssl.key.password": kafkaPassword,
+            //     // 'compression.codec': 'ssl',
+            //     // 'retry.backoff.ms': 200,
+            //     // 'message.send.max.retries': 10,
+            //     // 'socket.keepalive.enable': true,
+            //     // 'queue.buffering.max.messages': 100000,
+            //     // 'queue.buffering.max.ms': 1000,
+            //     // 'batch.num.messages': 1000000,
+            // })
+
+            // // Connect to the broker manually
+            // producer.connect()
+
+            // // Wait for the ready event before proceeding
+            // producer.on("ready", () => {
+            //     try {
+            //         producer.produce(
+            //         // Topic to send the message to
+            //         kafkaTopic,
+            //         // optionally we can manually specify a partition for the message
+            //         // this defaults to -1 - which will use librdkafka's default partitioner
+            //         // (consistent random for keyed messages, random for unkeyed messages)
+            //         null,
+            //         // Message to send. Must be a buffer
+            //         Buffer.from("balabala1"),
+            //         // for keyed messages, we also specify the key - note that this field is optional
+            //         null,
+            //         // you can send a timestamp here. If your broker version supports it,
+            //         // it will get added. Otherwise, we default to 0
+            //         Date.now(),
+            //         // you can send an opaque token here, which gets passed along
+            //         // to your delivery reports
+            //         (err: any, offset: any) => {
+            //             PhLogger.error(err)
+            //             PhLogger.error(offset)
+            //         })
+            //     } catch (err) {
+            //         PhLogger.error("A problem occurred when sending our message")
+            //         PhLogger.error(err)
+            //     }
+            // })
+
+            // // Any errors we encounter, including connection errors
+            // producer.on("event.error", (err) => {
+            //     PhLogger.error("Error from producer")
+            //     PhLogger.error(err)
+            // })
+
+        })
+
+        this.app.use("/", this.router)
     }
 
     protected loadConfiguration() {

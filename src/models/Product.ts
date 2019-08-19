@@ -16,7 +16,7 @@ class Product extends Typegoose implements IModelBase<Product> {
     public productCategory: string = ""
 
     @JsonProperty("medicateCategory", String)
-    @prop({ required: true })
+    @prop({ required: false, default: "" })
     public medicateCategory: string = ""
 
     @JsonProperty("producer", String)

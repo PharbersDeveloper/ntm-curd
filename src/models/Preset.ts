@@ -4,79 +4,120 @@ import { prop, Ref, Typegoose } from "typegoose"
 import Hospital from "./Hospital"
 import IModelBase from "./modelBase"
 import Product from "./Product"
+import Proposal from "./Proposal"
 import Resource from "./Resource"
 
 @JsonObject("Preset")
 class Preset extends Typegoose implements IModelBase<Preset> {
 
-    @prop({ref: Product, required: true})
+    @prop({ref: Proposal, required: true, default: null})
+    public proposal?: Ref<Proposal>
+
+    @prop({ required: false, default: "" })
+    public proposalId?: string
+
+    @prop({ required: false, default: "" })
+    public projectId?: string
+
+    @prop({ required: false, default: "" })
+    public periodId?: string
+
+    @prop({ref: Product, required: true, default: null })
     public product?: Ref<Product>
 
-    @prop({ref: Hospital, required: true})
+    @prop({ref: Hospital, required: true, default: null })
     public hospital?: Ref<Hospital>
 
-    @prop({ref: Resource, required: false})
+    @prop({ref: Resource, required: false, default: null })
     public resource?: Ref<Resource>
 
-    @JsonProperty("salesQuota", Number)
-    @prop({ default: 0 })
-    public salesQuota?: number = 0  // p_quota
+    @JsonProperty("phase", Number)
+    @prop({ required: true, default: 0 })
+    public phase: number = 0  //
 
-    @JsonProperty("sales", Number)
+    @JsonProperty("category", Number)
     @prop({ default: 0 })
-    public sales?: number = 0    // p_sales
+    public category?: number = 0  //
 
-    @JsonProperty("achievements", Number)
+    @JsonProperty("lastQuota", Number)
+    @prop({ default: 0 })
+    public lastQuota?: number = 0  // p_quota
+
+    @JsonProperty("lastSales", Number)
+    @prop({ default: 0 })
+    public lastSales?: number = 0    // p_sales
+
+    @JsonProperty("lastAchievement", Number)
     @prop({ default: 0.0 })
-    public achievements?: number = 0     // p_sales
+    public lastAchievement?: number = 0     // p_sales
 
     @JsonProperty("potential", Number)
     @prop({ default: 0 })
     public potential?: number = 0   // 铁马不变
 
-    @JsonProperty("share", Number)
+    @JsonProperty("lastShare", Number)
     @prop({ default: 0 })
-    public share?: number = 0   // p_share
+    public lastShare?: number = 0   // p_share
 
-    @JsonProperty("territoryManagementAbility", Number)
+    @JsonProperty("currentTMA", Number)
+    @prop({ required: false, default: 0 })
+    public currentTMA?: number = 0 // p_territory_management_ability
+
+    @JsonProperty("currentSalesSkills", Number)
     @prop({ default: 0 })
-    public territoryManagementAbility?: number = 0 // p_territory_management_ability
+    public currentSalesSkills?: number = 0 // p_sales_skills
 
-    @JsonProperty("salesSkills", Number)
+    @JsonProperty("currentProductKnowledge", Number)
     @prop({ default: 0 })
-    public salesSkills?: number = 0 // p_sales_skills
+    public currentProductKnowledge?: number = 0 // p_product_knowledge
 
-    @JsonProperty("salesSkills", Number)
+    @JsonProperty("currentBehaviorEfficiency", Number)
     @prop({ default: 0 })
-    public productKnowledge?: number = 0 // p_product_knowledge
+    public currentBehaviorEfficiency?: number = 0// p_behavior_efficiency
 
-    @JsonProperty("behaviorEfficiency", Number)
+    @JsonProperty("currentWorkMotivation", Number)
     @prop({ default: 0 })
-    public behaviorEfficiency?: number = 0// p_behavior_efficiency
+    public currentWorkMotivation?: number = 0 // p_work_motivation
 
-    @JsonProperty("workMotivation", Number)
+    @JsonProperty("currentTargetDoctorNum", Number)
     @prop({ default: 0 })
-    public workMotivation?: number = 0 // p_work_motivation
+    public currentTargetDoctorNum?: number = 0 // p_target
 
-    @JsonProperty("targetDoctorNum", Number)
-    @prop({ default: 0 })
-    public targetDoctorNum?: number // p_target
-
-    @JsonProperty("targetDoctorCoverage", Number)
+    @JsonProperty("currentTargetDoctorCoverage", Number)
     @prop({ default: 0.0 })
-    public targetDoctorCoverage?: number = 0.0 // p_target_coverage
+    public currentTargetDoctorCoverage?: number = 0.0 // p_target_coverage
 
-    @JsonProperty("highTarget", Number)
-    @prop({ default: 0 })
-    public highTarget?: number = 0 // p_high_target
+    @JsonProperty("currentClsADoctorVT", Number)
+    @prop({ required: false, default: 0 })
+    public currentClsADoctorVT?: number = 0 // p_high_target
 
-    @JsonProperty("middleTarget", Number)
-    @prop({ default: 0 })
-    public middleTarget?: number = 0 // p_middle_target
+    @JsonProperty("currentClsBDoctorVT", Number)
+    @prop({ required: false, default: 0 })
+    public currentClsBDoctorVT?: number = 0 // p_middle_target
 
-    @JsonProperty("lowTarget", Number)
-    @prop({ default: 0 })
-    public lowTarget?: number = 0 // p_low_target
+    @JsonProperty("currentClsADoctorVT", Number)
+    @prop({ required: false, default: 0 })
+    public currentClsCDoctorVT?: number = 0 // p_low_target
+
+    @JsonProperty("currentPatientNum", Number)
+    @prop({ required: false, default: 0 })
+    public currentPatientNum?: number = 0
+
+    @JsonProperty("currentDurgEntrance", String)
+    @prop({ required: false, default: "" })
+    public currentDurgEntrance?: string = ""
+
+    @JsonProperty("currentPolicy", String, false)
+    @prop({ required: false, default: "" })
+    public currentPolicy?: string = ""
+
+    @JsonProperty("lastBudget", Number)
+    @prop({ required: false, default: 0 })
+    public lastBudget?: number = 0
+
+    @JsonProperty("initBudget", Number)
+    @prop({ required: false, default: 0 })
+    public initBudget?: number = 0
 
     public getModel() {
         return this.getModelForClass(Preset)

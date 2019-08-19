@@ -7,8 +7,8 @@ import Report from "./Report"
 
 class Period extends Typegoose implements IModelBase<Period> {
 
-    @prop( { ref: Period, default: null} )
-    public last?: Ref<Period>
+    @prop({ required: true, default: 0 })
+    public phase: number = 0
 
     @prop({ required: true })
     public name: string
@@ -19,8 +19,9 @@ class Period extends Typegoose implements IModelBase<Period> {
     @arrayProp( { itemsRef: Report, required: true } )
     public reports: Array<Ref<Report>>
 
-    @arrayProp( { itemsRef: Preset, default: []} )
-    public presets?: Array<Ref<Preset>>
+    // 反向绑定
+    // @arrayProp( { itemsRef: Preset, default: []} )
+    // public presets?: Array<Ref<Preset>>
 
     public getModel() {
         return this.getModelForClass(Period)

@@ -35,15 +35,23 @@ models:
     reg: validations
   - file: Region
     reg: regions
+  - file: Final
+    reg: finals
 mongo:
   algorithm: mongodb
-  host: 192.168.100.174
-  port: 27017
+  host: pharbers.com
+  port: 5555
   username: alfredyang
   pwd: "12345"
   coll: "pharbers-ntm-client"
   auth: false
 env:
-  oauthHost: 192.168.100.174
-  oauthPort: 9096
+  oauthHost: oauth.pharbers.com
+  oauthPort: ""
   oauthApiNamespace: "v0"
+  kafkaBrokerList: "59.110.31.50:9092"
+  kafkaTopic: "test"
+  kafkaSecretsDir: "/Users/sunchenghao/secrets/"
+  kafkaPassword: "pharbers"
+  schemaRegisterHost: "59.110.31.50:8081"
+  httpCallUrl: "http://59.110.31.50:28888/spark/job/run"
