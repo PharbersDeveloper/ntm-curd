@@ -7,7 +7,7 @@ import Proposal from "./Proposal"
 import Result from "./Result"
 
 class Project extends Typegoose implements IModelBase<Project> {
-    @prop({ required: true })
+    @prop({ required: false, default: "" })
     public accountId: string
 
     @prop({ ref: Proposal, required: true })

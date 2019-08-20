@@ -10,7 +10,7 @@
     "prestart": "npm run build",
     "start": "node .",
     "pretest": "tsc",
-    "test": "nyc mocha",
+    "test": "mocha",
     "watch": "mocha-typescript-watch",
     "prepare": "tsc"
   },
