@@ -39,7 +39,7 @@ export default class AppDelegate {
 
     public exec() {
         this.loadConfiguration()
-        // this.configMiddleware()
+        this.configMiddleware()
         this.connect2MongoDB()
         this.generateRoutes(this.getModelRegistry())
         this.listen2Port(8080)
@@ -265,6 +265,17 @@ export default class AppDelegate {
 
         })
 
+        // Add routes for export data to excel
+        const exportRoute = "/export/:projectId/phase/:phase"
+        this.router.get(exportRoute, async (req, res) => {
+            PhLogger.error(req.params)
+            res.send(
+                res.json({
+                    jobId : await this.exportHandler.export2OssWithProject(req.params.projectId, req.params.phase)
+                })
+            )
+        } )
+
         this.app.use("/", this.router)
     }
 
@@ -372,11 +383,11 @@ export default class AppDelegate {
         this.app.patch(relation, Front.apiRequest)
         this.app.delete(relation, Front.apiRequest)
 
-        // Add routes for export data to excel
-        const exportRoute = "/export/:projectId/phase/:phase"
-        this.app.get(exportRoute, async (req, res) => {
-            res.send(await this.exportHandler.export2OssWithProject(req.params.projectId, req.params.phase))
-        } )
+        // // Add routes for export data to excel
+        // const exportRoute = "/export/:projectId/phase/:phase"
+        // this.app.get(exportRoute, async (req, res) => {
+        //     res.send(await this.exportHandler.export2OssWithProject(req.params.projectId, req.params.phase))
+        // } )
     }
 
     protected listen2Port(port: number) {
