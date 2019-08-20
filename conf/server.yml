@@ -55,3 +55,8 @@ env:
   kafkaPassword: "pharbers"
   schemaRegisterHost: "59.110.31.50:8081"
   httpCallUrl: "http://59.110.31.50:28888/spark/job/run"
+oss:
+  region: oss-cn-beijing
+  accessKeyId: LTAIEoXgk4DOHDGi
+  accessKeySecret: x75sK6191dPGiu9wBMtKE6YcBBh8EI
+  bucket: pharbers-sandbox

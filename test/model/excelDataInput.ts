@@ -20,7 +20,7 @@ class ExcelDataInput {
 
     public static before() {
         PhLogger.info(`before starting the test`)
-        mongoose.connect("mongodb://192.168.100.176:27017/pharbers-ntm-client-10")
+        mongoose.connect("mongodb://192.168.100.176:27017/pharbers-ntm-client")
     }
 
     public static after() {
