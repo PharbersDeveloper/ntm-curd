@@ -62,7 +62,7 @@ export default class AppDelegate {
 
         // a middleware function with no mount path. This code is executed for every request to the router
         this.router.use((req, res, next) => {
-
+            // next()
             // token验证请求及返回处理
 
             const auth = req.get("Authorization")
