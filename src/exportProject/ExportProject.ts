@@ -41,6 +41,57 @@ export default class ExportProejct {
         }
     }
 
+    public formatPhaseToStringDefault( date: any ) {
+        const year = date.getFullYear()
+        const month = date.getMonth()
+        let season = ""
+
+        switch ( true ) {
+        case month < 3:
+            season = "Q1"
+            break
+        case month < 6:
+            season = "Q2"
+            break
+        case month < 9:
+            season = "Q3"
+            break
+        default:
+            season = "Q4"
+            break
+        }
+        return `${year}${season}`
+    }
+
+    public formatPhaseToDate( OriginBasePhase: any, step: any, phase: any ) {
+
+        const basePhase = new Date( OriginBasePhase )
+        const year = basePhase.getFullYear()
+        const month = basePhase.getMonth()
+        const date = basePhase.getDate()
+        let newYear = year
+        let newMonth = month
+        let newDate = date
+        const unit = step.slice( -1 )
+        const stepNum = parseInt( step, 10 )
+
+        if ( ["y", "Y"].includes( unit ) ) {
+            newYear = year + stepNum * phase
+            basePhase.setFullYear( newYear )
+        } else if ( ["m", "M"].includes( unit ) ) {
+            newMonth = month + stepNum * phase
+            basePhase.setMonth( newMonth )
+        } else if ( ["w", "W"].includes( unit ) ) {
+            newDate = date + stepNum * 7 * phase
+            basePhase.setFullYear( newYear )
+        } else if ( ["d", "D"].includes( unit ) ) {
+            newDate = date + stepNum * phase
+            basePhase.setDate( newDate )
+        }
+
+        return basePhase
+    }
+
     public async export2OssWithProject(projectId: string, phase: string): Promise<any> {
         /**
          * 1. 找到当前Project下的，phase周期
@@ -153,34 +204,37 @@ export default class ExportProejct {
             }
 
             let pss = ""
-            switch (x.phase) {
-                case -4:
-                    pss = "2018 Q1"
-                    break
-                case -3:
-                    pss = "2018 Q2"
-                    break
-                case -2:
-                    pss = "2018 Q3"
-                    break
-                case -1:
-                    pss = "2018 Q4"
-                    break
-                case 0:
-                    pss = "2019 Q1"
-                    break
-                case 1:
-                    pss = "2019 Q2"
-                    break
-                case 2:
-                    pss = "2019 Q3"
-                    break
-                default:
-                    pss = ""
-            }
+            pss = this.formatPhaseToStringDefault(
+                this.formatPhaseToDate( curProposal.periodBase, curProposal.periodStep, x.phase )
+                )
+            // switch (x.phase) {
+            //     case -4:
+            //         pss = "2018 Q1"
+            //         break
+            //     case -3:
+            //         pss = "2018 Q2"
+            //         break
+            //     case -2:
+            //         pss = "2018 Q3"
+            //         break
+            //     case -1:
+            //         pss = "2018 Q4"
+            //         break
+            //     case 0:
+            //         pss = "2019 Q1"
+            //         break
+            //     case 1:
+            //         pss = "2019 Q2"
+            //         break
+            //     case 2:
+            //         pss = "2019 Q3"
+            //         break
+            //     default:
+            //         pss = ""
+            // }
 
             return [
-                x.phase,
+                pss,
                 hospital.position,
                 hospital.name,
                 hospital.level,
