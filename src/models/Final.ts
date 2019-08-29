@@ -25,6 +25,9 @@ class Final extends Typegoose implements IModelBase<Final> {
     @prop({ required: true })
     public roi: number
 
+    @prop({ required: true })
+    public newAccount: number
+
     public getModel() {
         return this.getModelForClass(Final)
     }

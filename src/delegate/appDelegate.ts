@@ -11,6 +11,7 @@ import { JsonConvert, ValueCheckingMode } from "json2typescript"
 import mongoose = require("mongoose")
 // import kafka from "node-rdkafka"
 import { ServerConf } from "../configFactory/serverConf"
+import ExportProejct from "../exportProject/ExportProject"
 import PhLogger from "../logger/phLogger"
 import { urlEncodeFilterParser } from "./urlEncodeFilterParser"
 
@@ -33,6 +34,7 @@ export default class AppDelegate {
     private conf: ServerConf
     private app = express()
     private router = express.Router()
+    private exportHandler: ExportProejct = null
     // private kafka = Kafka
 
     public exec() {
@@ -60,7 +62,7 @@ export default class AppDelegate {
 
         // a middleware function with no mount path. This code is executed for every request to the router
         this.router.use((req, res, next) => {
-
+            // next()
             // token验证请求及返回处理
 
             const auth = req.get("Authorization")
@@ -263,6 +265,17 @@ export default class AppDelegate {
 
         })
 
+        // Add routes for export data to excel
+        const exportRoute = "/export/:projectId/phase/:phase"
+        this.router.get(exportRoute, async (req, res) => {
+            PhLogger.error(req.params)
+            res.send(
+                res.json({
+                    jobId : await this.exportHandler.export2OssWithProject(req.params.projectId, req.params.phase)
+                })
+            )
+        } )
+
         this.app.use("/", this.router)
     }
 
@@ -275,6 +288,7 @@ export default class AppDelegate {
             jsonConvert.ignorePrimitiveChecks = false // don't allow assigning number to string etc.
             jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
             this.conf = jsonConvert.deserializeObject(doc, ServerConf)
+            this.exportHandler = new ExportProejct(this.conf.oss)
         } catch (e) {
             PhLogger.fatal( e as Error )
         }
@@ -368,6 +382,12 @@ export default class AppDelegate {
         this.app.post(relation, Front.apiRequest)
         this.app.patch(relation, Front.apiRequest)
         this.app.delete(relation, Front.apiRequest)
+
+        // // Add routes for export data to excel
+        // const exportRoute = "/export/:projectId/phase/:phase"
+        // this.app.get(exportRoute, async (req, res) => {
+        //     res.send(await this.exportHandler.export2OssWithProject(req.params.projectId, req.params.phase))
+        // } )
     }
 
     protected listen2Port(port: number) {
