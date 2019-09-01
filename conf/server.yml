@@ -55,7 +55,7 @@ env:
   kafkaPassword: "pharbers"
   schemaRegisterHost: "59.110.31.50:8081"
   httpCallUrl: "http://59.110.31.50:28888/spark/job/run"
-  httpCallRUrl: "http://192.168.100.157:9213/v1.0/job_reg"
+  httpCallRUrl: "http://59.110.31.50:9213/v1.0/job_reg"
 oss:
   region: oss-cn-beijing
   accessKeyId: LTAIEoXgk4DOHDGi
