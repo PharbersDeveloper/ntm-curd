@@ -163,7 +163,9 @@ export default class ExportProejct {
                 phase: { $lte: currentPhase },
             })
 
-        const reportProposalData = reports.map( (x) => {
+        const reportProposalData = reports.map( (x, index) => {
+            // phLogger.info(x)
+            // phLogger.info(index)
             const hospital = hospitals.find((h) => h.id === x.hospital.toString())
             const tmprid = x.resource ? x.resource.toString() : ""
             const resource = resources.find((r) => r.id === tmprid)
@@ -176,6 +178,7 @@ export default class ExportProejct {
 
             let entrance = ""
             if (cpp) {
+                // phLogger.info(cpp.currentDurgEntrance)
                 if (cpp.currentDurgEntrance === "1") {
                     entrance = "已开发"
                 } else if (cpp.currentDurgEntrance === "2") {
@@ -206,32 +209,36 @@ export default class ExportProejct {
             let pss = ""
             pss = this.formatPhaseToStringDefault(
                 this.formatPhaseToDate( curProposal.periodBase, curProposal.periodStep, x.phase )
-                )
-            // switch (x.phase) {
-            //     case -4:
-            //         pss = "2018 Q1"
-            //         break
-            //     case -3:
-            //         pss = "2018 Q2"
-            //         break
-            //     case -2:
-            //         pss = "2018 Q3"
-            //         break
-            //     case -1:
-            //         pss = "2018 Q4"
-            //         break
-            //     case 0:
-            //         pss = "2019 Q1"
-            //         break
-            //     case 1:
-            //         pss = "2019 Q2"
-            //         break
-            //     case 2:
-            //         pss = "2019 Q3"
-            //         break
-            //     default:
-            //         pss = ""
-            // }
+            )
+            switch (x.phase) {
+                case -4:
+                    pss = "2018 Q1"
+                    break
+                case -3:
+                    pss = "2018 Q2"
+                    break
+                case -2:
+                    pss = "2018 Q3"
+                    break
+                case -1:
+                    pss = "2018 Q4"
+                    break
+                // case 0:
+                //     pss = "2019 Q1"
+                //     break
+                // case 1:
+                //     pss = "2019 Q2"
+                //     break
+                // case 2:
+                //     pss = "2019 Q3"
+                //     break
+                default:
+                    // pss = ""
+            }
+
+            // phLogger.info(tmprid)
+            // phLogger.info(resource)
+            // phLogger.info(x.sales)
 
             return [
                 pss,
