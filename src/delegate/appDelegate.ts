@@ -95,9 +95,9 @@ export default class AppDelegate {
             })
         })
 
-        this.router.post("/callR", (req, res, next) => {
+        this.router.post("/callE", (req, res, next) => {
 
-            // 临时R计算
+            // 临时写ES
 
             PhLogger.info(req.body.callr)
             PhLogger.info(req.body.type)
@@ -109,12 +109,12 @@ export default class AppDelegate {
             let jsonFile = ""
 
             if (req.body.type === "tmr") {
-                    jsonFile = "TMCal.json"
-                } else if (req.body.type === "ucbr") {
-                    jsonFile = "UCBCal.json"
-                } else {
-                    jsonFile = "TMMongo2EsJob.json"
-                }
+                jsonFile = "TMCal.json"
+            } else if (req.body.type === "ucbr") {
+                jsonFile = "UCBCal.json"
+            } else {
+                jsonFile = "TMMongo2EsJob.json"
+            }
 
             const httpCallUrl = this.conf.env.httpCallUrl
 
@@ -133,6 +133,54 @@ export default class AppDelegate {
                     topic: "testTM",
                 },
                 id: this.uuidv4(),
+            }).then((response) => {
+                PhLogger.info("E ok")
+                res.status(200).send(response.data)
+                return
+            }).catch((error) => {
+                PhLogger.error("E error")
+                PhLogger.error(error)
+                res.status(500).send(error)
+                return
+            })
+        })
+
+        this.router.post("/callR", (req, res, next) => {
+
+            // 临时R计算
+
+            PhLogger.info(req.body.callr)
+            PhLogger.info(req.body.type)
+            PhLogger.info(req.body.periodId)
+            PhLogger.info(req.body.projectId)
+            PhLogger.info(req.body.proposalId)
+            PhLogger.info(req.body.phase)
+
+            // let jsonFile = ""
+
+            // if (req.body.type === "tmr") {
+            //     jsonFile = "TMCal.json"
+            // } else if (req.body.type === "ucbr") {
+            //     jsonFile = "UCBCal.json"
+            // } else {
+            //     jsonFile = "TMMongo2EsJob.json"
+            // }
+
+            const httpCallRUrl = this.conf.env.httpCallRUrl
+            const uuid = this.uuidv4()
+
+            axios.post(httpCallRUrl, {
+                jobId: uuid,
+                processConfig: "pharbers-resources/UCB_Submit.json",
+                processConfigType: "json",
+                processLocation: "oss",
+                replace: {
+                    jobId: uuid,
+                    periodId: req.body.periodId,
+                    phase: req.body.phase,
+                    projectId: req.body.projectId,
+                    proposalId: req.body.proposalId,
+                },
             }).then((response) => {
                 PhLogger.info("R ok")
                 res.status(200).send(response.data)

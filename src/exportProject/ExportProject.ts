@@ -212,16 +212,16 @@ export default class ExportProejct {
             )
             switch (x.phase) {
                 case -4:
-                    pss = "2018 Q1"
+                    pss = "2018Q1"
                     break
                 case -3:
-                    pss = "2018 Q2"
+                    pss = "2018Q2"
                     break
                 case -2:
-                    pss = "2018 Q3"
+                    pss = "2018Q3"
                     break
                 case -1:
-                    pss = "2018 Q4"
+                    pss = "2018Q4"
                     break
                 // case 0:
                 //     pss = "2019 Q1"
