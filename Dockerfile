@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y && \
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && \
 	apt-get install -y nodejs
 
-LABEL ntm-curd.version=1.0.12
+LABEL ntm-curd.version=1.0.13
 
 WORKDIR /app
 

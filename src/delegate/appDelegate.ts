@@ -171,7 +171,7 @@ export default class AppDelegate {
 
             axios.post(httpCallRUrl, {
                 jobId: uuid,
-                processConfig: "pharbers-resources/UCB_Submit.json",
+                processConfig: "pharbers-resources/UCB_Submit_New.json",
                 processConfigType: "json",
                 processLocation: "oss",
                 replace: {
