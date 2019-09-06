@@ -4,7 +4,6 @@ import uuidv4 from "uuid/v4"
 import XLSX = require("xlsx")
 import { OssConf } from "../configFactory/ossConf"
 import PhLogger from "../logger/phLogger"
-import phLogger from "../logger/phLogger"
 import Hospital from "../models/Hospital"
 import Period from "../models/Period"
 import Preset from "../models/Preset"
@@ -37,7 +36,7 @@ export default class ExportProejct {
             // let r2 = await this.client.get('object');
             // console.log('get success: %j', r2);
         } catch (err) {
-            phLogger.info("error: %j", err)
+            PhLogger.info("error: %j", err)
         }
     }
 
@@ -143,15 +142,29 @@ export default class ExportProejct {
         const repsm = new Report().getModel()
         const presm = new Preset().getModel()
 
-        const reports = await repsm.find(
+        const preReports = await repsm.find(
             {
-                $or: [
-                    {projectId},
-                    {proposalId}
-                ],
+                // $or: [
+                //     {projectId},
+                //     {proposalId}
+                // ],
+                category: "Hospital",
+                phase: { $lt: 0 } ,
+                proposalId,
+            }).sort("phase").exec()
+
+        const clacReports = await repsm.find(
+            {
+                // $or: [
+                //     {projectId},
+                //     {proposalId}
+                // ],
                 category: "Hospital",
                 phase: { $lt: currentPhase } ,
+                projectId,
             }).sort("phase").exec()
+
+        const reports = preReports.concat(clacReports)
 
         const presets = await presm.find(
             {
@@ -164,8 +177,6 @@ export default class ExportProejct {
             })
 
         const reportProposalData = reports.map( (x, index) => {
-            // phLogger.info(x)
-            // phLogger.info(index)
             const hospital = hospitals.find((h) => h.id === x.hospital.toString())
             const tmprid = x.resource ? x.resource.toString() : ""
             const resource = resources.find((r) => r.id === tmprid)
@@ -178,7 +189,6 @@ export default class ExportProejct {
 
             let entrance = ""
             if (cpp) {
-                // phLogger.info(cpp.currentDurgEntrance)
                 if (cpp.currentDurgEntrance === "1") {
                     entrance = "已开发"
                 } else if (cpp.currentDurgEntrance === "2") {
@@ -235,10 +245,6 @@ export default class ExportProejct {
                 default:
                     // pss = ""
             }
-
-            // phLogger.info(tmprid)
-            // phLogger.info(resource)
-            // phLogger.info(x.sales)
 
             return [
                 pss,
