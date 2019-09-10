@@ -13,58 +13,58 @@ class Answer extends Typegoose implements IModelBase<Answer> {
     @prop({ enum: AnswerCategory, required: true })
     public category: AnswerCategory
 
-    @prop({ default: -1, required: true })
+    @prop({ default: 0, required: true })
     public salesTarget?: number
 
-    @prop({ default: -1, required: true })
+    @prop({ default: 0, required: true })
     public budget?: number
 
-    @prop({ default: -1, required: true })
+    @prop({ default: 0, required: true })
     public meetingPlaces?: number
 
-    @prop({ default: -1, required: true })
+    @prop({ default: 0, required: true })
     public visitTime?: number
 
     /**
      * resource related
      */
-    @prop({ default: -1, required: true })
+    @prop({ default: 0, required: true })
     public productKnowledgeTraining?: number
 
-    @prop({ default: -1, required: true })
+    @prop({ default: 0, required: true })
     public vocationalDevelopment?: number
 
-    @prop({ default: -1, required: true })
+    @prop({ default: 0, required: true })
     public regionTraining?: number
 
-    @prop({ default: -1, required: true })
+    @prop({ default: 0, required: true })
     public performanceTraining?: number
 
-    @prop({ default: -1, required: true })
+    @prop({ default: 0, required: true })
     public salesAbilityTraining?: number
 
-    @prop({ default: -1, required: true })
+    @prop({ default: 0, required: true })
     public assistAccessTime?: number
 
-    @prop({ default: -1, required: true })
+    @prop({ default: 0, required: true })
     public abilityCoach?: number
 
     /**
      * management input
      */
-    @prop({ default: -1, required: true })
+    @prop({ default: 0, required: true })
     public strategAnalysisTime?: number
 
-    @prop({ default: -1, required: true })
+    @prop({ default: 0, required: true })
     public adminWorkTime?: number
 
-    @prop({ default: -1, required: true })
+    @prop({ default: 0, required: true })
     public clientManagementTime?: number
 
-    @prop({ default: -1, required: true })
+    @prop({ default: 0, required: true })
     public kpiAnalysisTime?: number
 
-    @prop({ default: -1, required: true })
+    @prop({ default: 0, required: true })
     public teamMeetingTime?: number
 
     @prop({ ref: Resource, default: null, required: true })

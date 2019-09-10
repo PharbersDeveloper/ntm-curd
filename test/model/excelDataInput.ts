@@ -20,7 +20,7 @@ class ExcelDataInput {
 
     public static before() {
         PhLogger.info(`before starting the test`)
-        mongoose.connect("mongodb://192.168.100.176:27017/pharbers-ntm-client")
+        mongoose.connect("mongodb://pharbers.com:5555/pharbers-ntm-client")
     }
 
     public static after() {
@@ -187,6 +187,26 @@ class ExcelDataInput {
         }
 
         /**
+         * 11. read validations data in the excel
+         * and colleect all the insertion ids
+         */
+        let validations: Validation[] = []
+        {
+            PhLogger.info(`11. read validations data in the excel`)
+
+            const data = XLSX.utils.sheet_to_json(wb.Sheets.Validation, { header: 2, defval: "" })
+
+            const jsonConvert: JsonConvert = new JsonConvert()
+            const th = new Validation()
+            validations = await Promise.all(data.map ( (x) => {
+                // jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
+                jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
+                jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
+                return th.getModel().create(jsonConvert.deserializeObject(x, Validation))
+            }))
+        }
+
+        /**
          * 6. read proposal data in the excel
          * and colleect all the insertion ids
          */
@@ -209,20 +229,7 @@ class ExcelDataInput {
                 proposal.resources = resources
                 proposal.evaluations = evls
                 proposal.quota = reqs[0]
-
-                const validation = new Validation()
-                validation.inputType = "managementTimeInputType#Number*"
-                                     + "businessBudgetInputType#Number*"
-                                     + "businessSalesTargetInputType#Number*"
-                                     + "businessMeetingPlacesInputType#Number"
-                validation.maxValue = "managementMaxTime#100*"
-                                    + "managementMaxActionPoint#5*"
-                                    + "businessMaxBudget#200000*"
-                                    + "businessMaxSalesTarget#3700000*"
-                                    + "businessMaxMeetingPlaces#6"
-
-                const v = await validation.getModel().create(validation)
-                proposal.validation = v
+                proposal.validations = validations
 
                 fp = await th.getModel().create(proposal)
                 const ups = new UsableProposal()
