@@ -56,8 +56,8 @@ class Proposal extends Typegoose implements IModelBase<Proposal> {
     @prop({ ref: Requirement, required: false, default: [] })
     public quota: Ref<Requirement>
 
-    @prop({ ref: Validation, required: false, default: [] })
-    public validation: Ref<Validation>
+    @arrayProp({ itemsRef: Validation, required: false, default: [] })
+    public validations: Array<Ref<Validation>>
 
     public getModel() {
         return this.getModelForClass(Proposal)
