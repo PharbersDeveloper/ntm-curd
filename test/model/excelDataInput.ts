@@ -286,11 +286,13 @@ class ExcelDataInput {
                 if (item.category & 8 /*PresetCategory.Protental*/) {
                     const hospName: string = x.hospital
                     const productName: string = x.product
+                    const resName: string = x.resource
                     const op = products.find((y) => y.name === productName)
                     const oh = hosps.find((y) => y.name === hospName)
+                    const res = resources.find((y) => y.name === resName)
                     item.hospital = oh
                     item.product = op
-                    item.resource = null
+                    item.resource = res
                 }
 
                 if (item.category & 16 /*PresetCategory.Share*/) {
