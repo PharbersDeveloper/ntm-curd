@@ -1,5 +1,6 @@
 "use strict"
 import OSS from "ali-oss"
+import project from "ramda/es/project"
 import uuidv4 from "uuid/v4"
 import XLSX = require("xlsx")
 import { OssConf } from "../configFactory/ossConf"
@@ -21,22 +22,27 @@ export default class ExportProejct {
     private suffix: string = ".xlsx"
 
     constructor(oss: OssConf) {
-        this.client = new OSS({
-            accessKeyId: oss.accessKeyId,
-            accessKeySecret: oss.accessKeySecret,
-            bucket: oss.bucket,
-            region: oss.region,
-        })
+        if (oss) {
+            this.client = new OSS({
+                accessKeyId: oss.accessKeyId,
+                accessKeySecret: oss.accessKeySecret,
+                bucket: oss.bucket,
+                region: oss.region,
+            })
+        }
     }
 
     public async pushResult2OSS(jobId: string) {
-        try {
-            const r1 = await this.client.put(this.exportDir + jobId + this.suffix, this.localPath + jobId + this.suffix)
-            PhLogger.info("put success: %j", r1)
-            // let r2 = await this.client.get('object');
-            // console.log('get success: %j', r2);
-        } catch (err) {
-            PhLogger.info("error: %j", err)
+        if (this.client) {
+            try {
+                const r1 =
+                    await this.client.put(this.exportDir + jobId + this.suffix, this.localPath + jobId + this.suffix)
+                PhLogger.info("put success: %j", r1)
+                // let r2 = await this.client.get('object');
+                // console.log('get success: %j', r2);
+            } catch (err) {
+                PhLogger.info("error: %j", err)
+            }
         }
     }
 
@@ -109,7 +115,6 @@ export default class ExportProejct {
         const psm = new Proposal().getModel()
         const proposalId = curProject.proposal
         const curProposal = await psm.findById(proposalId).exec()
-        PhLogger.info(curProposal)
 
         /**
          * 3. 获取当前的proposal下所有参与的hospital，products以及resources
@@ -142,29 +147,17 @@ export default class ExportProejct {
         const repsm = new Report().getModel()
         const presm = new Preset().getModel()
 
-        const preReports = await repsm.find(
+        const reports = await repsm.find(
             {
-                // $or: [
-                //     {projectId},
-                //     {proposalId}
-                // ],
+                $or: [
+                    {projectId},
+                    {proposalId}
+                ],
                 category: "Hospital",
-                phase: { $lt: 0 } ,
-                proposalId,
+                phase: { $lt: currentPhase }
             }).sort("phase").exec()
 
-        const clacReports = await repsm.find(
-            {
-                // $or: [
-                //     {projectId},
-                //     {proposalId}
-                // ],
-                category: "Hospital",
-                phase: { $lt: currentPhase } ,
-                projectId,
-            }).sort("phase").exec()
-
-        const reports = preReports.concat(clacReports)
+        // const reports = preReports.concat(clacReports)
 
         const presets = await presm.find(
             {
@@ -181,11 +174,22 @@ export default class ExportProejct {
             const tmprid = x.resource ? x.resource.toString() : ""
             const resource = resources.find((r) => r.id === tmprid)
             const product = products.find((p) => p.id === x.product.toString())
-            const cpp = presets.find( (pp) => {
-                return pp.phase - 1 === x.phase &&
-                    pp.hospital.toString() === x.hospital.toString() &&
-                    pp.product.toString() === x.product.toString()
-            } )
+
+            const condi = (pp: Preset) => {
+                if (x.phase < 0) {
+                    return pp.phase - 1 === x.phase &&
+                        pp.projectId === "" &&
+                        pp.hospital.toString() === x.hospital.toString() &&
+                        pp.product.toString() === x.product.toString()
+                } else {
+                    return pp.phase - 1 === x.phase &&
+                        pp.projectId === projectId &&
+                        pp.hospital.toString() === x.hospital.toString() &&
+                        pp.product.toString() === x.product.toString()
+                }
+            }
+
+            const cpp = presets.find(condi)
 
             let entrance = ""
             if (cpp) {
@@ -198,23 +202,23 @@ export default class ExportProejct {
                 }
             }
 
-            if (entrance === "") {
-                const tmp = presets.find( (pp) => {
-                    return pp.phase === 0 &&
-                        pp.hospital.toString() === x.hospital.toString() &&
-                        pp.product.toString() === x.product.toString()
-                } )
+            // if (entrance === "") {
+            //     const tmp = presets.find( (pp) => {
+            //         return pp.phase === 0 &&
+            //             pp.hospital.toString() === x.hospital.toString() &&
+            //             pp.product.toString() === x.product.toString()
+            //     } )
 
-                if (tmp) {
-                    if (tmp.currentDurgEntrance === "1") {
-                        entrance = "已开发"
-                    } else if (tmp.currentDurgEntrance === "2") {
-                        entrance = "正在开发"
-                    } else {
-                        entrance = "未开发"
-                    }
-                }
-            }
+            //     if (tmp) {
+            //         if (tmp.currentDurgEntrance === "1") {
+            //             entrance = "已开发"
+            //         } else if (tmp.currentDurgEntrance === "2") {
+            //             entrance = "正在开发"
+            //         } else {
+            //             entrance = "未开发"
+            //         }
+            //     }
+            // }
 
             let pss = ""
             pss = this.formatPhaseToStringDefault(
@@ -233,17 +237,27 @@ export default class ExportProejct {
                 case -1:
                     pss = "2018Q4"
                     break
-                case 0:
-                    pss = "2019Q1"
-                    break
-                case 1:
-                    pss = "2019Q2"
-                    break
-                case 2:
-                    pss = "2019Q3"
-                    break
+                // case 0:
+                //     pss = "2019Q1"
+                //     break
+                // case 1:
+                //     pss = "2019Q2"
+                //     break
+                // case 2:
+                //     pss = "2019Q3"
+                //     break
                 default:
-                    pss = ""
+                    // pss = ""
+            }
+
+            const qa_func = (qa: number, q: number) => {
+                if (qa > 0) {
+                    return qa
+                } else if ( q === 0) {
+                    return "" 
+                } else {
+                    return ""
+                }
             }
 
             return [
@@ -255,7 +269,7 @@ export default class ExportProejct {
                 product.name,
                 entrance,
                 cpp ? cpp.currentPatientNum : 0,
-                x.achievements,
+                qa_func(x.phase < 0 ? x.achievements : cpp.lastAchievement, x.phase < 0 ? x.salesQuota : cpp.lastQuota),
                 x.sales
             ]
         } )
