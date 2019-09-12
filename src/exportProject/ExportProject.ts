@@ -250,11 +250,11 @@ export default class ExportProejct {
                     // pss = ""
             }
 
-            const qa_func = (qa: number, q: number) => {
+            const qFunc = (qa: number, q: number) => {
                 if (qa > 0) {
                     return qa
                 } else if ( q === 0) {
-                    return "" 
+                    return ""
                 } else {
                     return ""
                 }
@@ -269,7 +269,7 @@ export default class ExportProejct {
                 product.name,
                 entrance,
                 cpp ? cpp.currentPatientNum : 0,
-                qa_func(x.phase < 0 ? x.achievements : cpp.lastAchievement, x.phase < 0 ? x.salesQuota : cpp.lastQuota),
+                qFunc(x.phase < 0 ? x.achievements : cpp.lastAchievement, x.phase < 0 ? x.salesQuota : cpp.lastQuota),
                 x.sales
             ]
         } )
