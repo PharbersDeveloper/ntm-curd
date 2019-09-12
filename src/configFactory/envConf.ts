@@ -31,4 +31,7 @@ export class EnvConf {
     @JsonProperty("httpCallUrl", String)
     public httpCallUrl: string = undefined
 
+    @JsonProperty("httpCallRUrl", String)
+    public httpCallRUrl: string = undefined
+
 }

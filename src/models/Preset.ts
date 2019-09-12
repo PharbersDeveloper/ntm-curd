@@ -28,7 +28,7 @@ class Preset extends Typegoose implements IModelBase<Preset> {
     @prop({ref: Hospital, required: true, default: null })
     public hospital?: Ref<Hospital>
 
-    @prop({ref: Resource, required: false, default: null })
+    @prop({ref: Resource, required: true, default: null })
     public resource?: Ref<Resource>
 
     @JsonProperty("phase", Number)

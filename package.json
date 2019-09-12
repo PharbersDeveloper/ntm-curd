@@ -1,6 +1,6 @@
 {
   "name": "ntm-curd",
-  "version": "1.0.9",
+	"version": "1.0.15",
   "description": "",
   "main": "dist/src/index.js",
   "scripts": {
@@ -10,7 +10,7 @@
     "prestart": "npm run build",
     "start": "node .",
     "pretest": "tsc",
-    "test": "nyc mocha",
+    "test": "mocha",
     "watch": "mocha-typescript-watch",
     "prepare": "tsc"
   },

@@ -1,10 +1,10 @@
 "use strict"
 import OSS from "ali-oss"
+import project from "ramda/es/project"
 import uuidv4 from "uuid/v4"
 import XLSX = require("xlsx")
 import { OssConf } from "../configFactory/ossConf"
 import PhLogger from "../logger/phLogger"
-import phLogger from "../logger/phLogger"
 import Hospital from "../models/Hospital"
 import Period from "../models/Period"
 import Preset from "../models/Preset"
@@ -22,22 +22,27 @@ export default class ExportProejct {
     private suffix: string = ".xlsx"
 
     constructor(oss: OssConf) {
-        this.client = new OSS({
-            accessKeyId: oss.accessKeyId,
-            accessKeySecret: oss.accessKeySecret,
-            bucket: oss.bucket,
-            region: oss.region,
-        })
+        if (oss) {
+            this.client = new OSS({
+                accessKeyId: oss.accessKeyId,
+                accessKeySecret: oss.accessKeySecret,
+                bucket: oss.bucket,
+                region: oss.region,
+            })
+        }
     }
 
     public async pushResult2OSS(jobId: string) {
-        try {
-            const r1 = await this.client.put(this.exportDir + jobId + this.suffix, this.localPath + jobId + this.suffix)
-            PhLogger.info("put success: %j", r1)
-            // let r2 = await this.client.get('object');
-            // console.log('get success: %j', r2);
-        } catch (err) {
-            phLogger.info("error: %j", err)
+        if (this.client) {
+            try {
+                const r1 =
+                    await this.client.put(this.exportDir + jobId + this.suffix, this.localPath + jobId + this.suffix)
+                PhLogger.info("put success: %j", r1)
+                // let r2 = await this.client.get('object');
+                // console.log('get success: %j', r2);
+            } catch (err) {
+                PhLogger.info("error: %j", err)
+            }
         }
     }
 
@@ -110,7 +115,6 @@ export default class ExportProejct {
         const psm = new Proposal().getModel()
         const proposalId = curProject.proposal
         const curProposal = await psm.findById(proposalId).exec()
-        PhLogger.info(curProposal)
 
         /**
          * 3. 获取当前的proposal下所有参与的hospital，products以及resources
@@ -150,8 +154,10 @@ export default class ExportProejct {
                     {proposalId}
                 ],
                 category: "Hospital",
-                phase: { $lt: currentPhase } ,
+                phase: { $lt: currentPhase }
             }).sort("phase").exec()
+
+        // const reports = preReports.concat(clacReports)
 
         const presets = await presm.find(
             {
@@ -163,16 +169,27 @@ export default class ExportProejct {
                 phase: { $lte: currentPhase },
             })
 
-        const reportProposalData = reports.map( (x) => {
+        const reportProposalData = reports.map( (x, index) => {
             const hospital = hospitals.find((h) => h.id === x.hospital.toString())
             const tmprid = x.resource ? x.resource.toString() : ""
             const resource = resources.find((r) => r.id === tmprid)
             const product = products.find((p) => p.id === x.product.toString())
-            const cpp = presets.find( (pp) => {
-                return pp.phase - 1 === x.phase &&
-                    pp.hospital.toString() === x.hospital.toString() &&
-                    pp.product.toString() === x.product.toString()
-            } )
+
+            const condi = (pp: Preset) => {
+                if (x.phase < 0) {
+                    return pp.phase - 1 === x.phase &&
+                        pp.projectId === "" &&
+                        pp.hospital.toString() === x.hospital.toString() &&
+                        pp.product.toString() === x.product.toString()
+                } else {
+                    return pp.phase - 1 === x.phase &&
+                        pp.projectId === projectId &&
+                        pp.hospital.toString() === x.hospital.toString() &&
+                        pp.product.toString() === x.product.toString()
+                }
+            }
+
+            const cpp = presets.find(condi)
 
             let entrance = ""
             if (cpp) {
@@ -185,53 +202,63 @@ export default class ExportProejct {
                 }
             }
 
-            if (entrance === "") {
-                const tmp = presets.find( (pp) => {
-                    return pp.phase === 0 &&
-                        pp.hospital.toString() === x.hospital.toString() &&
-                        pp.product.toString() === x.product.toString()
-                } )
+            // if (entrance === "") {
+            //     const tmp = presets.find( (pp) => {
+            //         return pp.phase === 0 &&
+            //             pp.hospital.toString() === x.hospital.toString() &&
+            //             pp.product.toString() === x.product.toString()
+            //     } )
 
-                if (tmp) {
-                    if (tmp.currentDurgEntrance === "1") {
-                        entrance = "已开发"
-                    } else if (tmp.currentDurgEntrance === "2") {
-                        entrance = "正在开发"
-                    } else {
-                        entrance = "未开发"
-                    }
-                }
-            }
+            //     if (tmp) {
+            //         if (tmp.currentDurgEntrance === "1") {
+            //             entrance = "已开发"
+            //         } else if (tmp.currentDurgEntrance === "2") {
+            //             entrance = "正在开发"
+            //         } else {
+            //             entrance = "未开发"
+            //         }
+            //     }
+            // }
 
             let pss = ""
             pss = this.formatPhaseToStringDefault(
                 this.formatPhaseToDate( curProposal.periodBase, curProposal.periodStep, x.phase )
-                )
-            // switch (x.phase) {
-            //     case -4:
-            //         pss = "2018 Q1"
-            //         break
-            //     case -3:
-            //         pss = "2018 Q2"
-            //         break
-            //     case -2:
-            //         pss = "2018 Q3"
-            //         break
-            //     case -1:
-            //         pss = "2018 Q4"
-            //         break
-            //     case 0:
-            //         pss = "2019 Q1"
-            //         break
-            //     case 1:
-            //         pss = "2019 Q2"
-            //         break
-            //     case 2:
-            //         pss = "2019 Q3"
-            //         break
-            //     default:
-            //         pss = ""
-            // }
+            )
+            switch (x.phase) {
+                case -4:
+                    pss = "2018Q1"
+                    break
+                case -3:
+                    pss = "2018Q2"
+                    break
+                case -2:
+                    pss = "2018Q3"
+                    break
+                case -1:
+                    pss = "2018Q4"
+                    break
+                // case 0:
+                //     pss = "2019Q1"
+                //     break
+                // case 1:
+                //     pss = "2019Q2"
+                //     break
+                // case 2:
+                //     pss = "2019Q3"
+                //     break
+                default:
+                    // pss = ""
+            }
+
+            const qFunc = (qa: number, q: number) => {
+                if (qa > 0) {
+                    return qa
+                } else if ( q === 0) {
+                    return ""
+                } else {
+                    return ""
+                }
+            }
 
             return [
                 pss,
@@ -242,7 +269,7 @@ export default class ExportProejct {
                 product.name,
                 entrance,
                 cpp ? cpp.currentPatientNum : 0,
-                x.achievements,
+                qFunc(x.phase < 0 ? x.achievements : cpp.lastAchievement, x.phase < 0 ? x.salesQuota : cpp.lastQuota),
                 x.sales
             ]
         } )

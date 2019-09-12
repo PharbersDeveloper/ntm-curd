@@ -39,11 +39,11 @@ models:
     reg: finals
 mongo:
   algorithm: mongodb
-  host: pharbers.com
-  port: 5555
+  host: 192.168.100.176
+  port: 27017
   username: alfredyang
   pwd: "12345"
-  coll: "pharbers-ntm-client"
+  coll: "pharbers-ntm-client-11"
   auth: false
 env:
   oauthHost: oauth.pharbers.com
@@ -55,6 +55,7 @@ env:
   kafkaPassword: "pharbers"
   schemaRegisterHost: "59.110.31.50:8081"
   httpCallUrl: "http://59.110.31.50:28888/spark/job/run"
+  httpCallRUrl: "http://59.110.31.50:9213/v1.0/job_reg"
 oss:
   region: oss-cn-beijing
   accessKeyId: LTAIEoXgk4DOHDGi
