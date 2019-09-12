@@ -20,7 +20,8 @@ WORKDIR /app/ntm-curd
 
 RUN npm install && \
 	npm run build && \
-	mkdir -p log
+	mkdir -p log && \
+	mkdir -p tmp
 
 EXPOSE 8080
 
