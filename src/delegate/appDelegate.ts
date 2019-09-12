@@ -317,12 +317,9 @@ export default class AppDelegate {
         // Add routes for export data to excel
         const exportRoute = "/export/:projectId/phase/:phase"
         this.router.get(exportRoute, async (req, res) => {
-            PhLogger.error(req.params)
-            res.send(
-                res.json({
-                    jobId : await this.exportHandler.export2OssWithProject(req.params.projectId, req.params.phase)
-                })
-            )
+            res.json({
+                jobId : await this.exportHandler.export2OssWithProject(req.params.projectId, req.params.phase)
+            })
         } )
 
         this.app.use("/", this.router)

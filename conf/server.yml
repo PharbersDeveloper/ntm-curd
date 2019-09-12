@@ -39,11 +39,11 @@ models:
     reg: finals
 mongo:
   algorithm: mongodb
-  host: 192.168.100.176
-  port: 27017
+  host: pharbers.com
+  port: 5555
   username: alfredyang
   pwd: "12345"
-  coll: "pharbers-ntm-client-11"
+  coll: "pharbers-ntm-client"
   auth: false
 env:
   oauthHost: oauth.pharbers.com
