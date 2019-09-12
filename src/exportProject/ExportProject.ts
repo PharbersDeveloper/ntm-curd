@@ -233,17 +233,17 @@ export default class ExportProejct {
                 case -1:
                     pss = "2018Q4"
                     break
-                // case 0:
-                //     pss = "2019 Q1"
-                //     break
-                // case 1:
-                //     pss = "2019 Q2"
-                //     break
-                // case 2:
-                //     pss = "2019 Q3"
-                //     break
+                case 0:
+                    pss = "2019Q1"
+                    break
+                case 1:
+                    pss = "2019Q2"
+                    break
+                case 2:
+                    pss = "2019Q3"
+                    break
                 default:
-                    // pss = ""
+                    pss = ""
             }
 
             return [
