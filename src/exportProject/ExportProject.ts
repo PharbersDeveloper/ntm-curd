@@ -1,6 +1,7 @@
 "use strict"
 import OSS from "ali-oss"
-import project from "ramda/es/project"
+import R from "ramda"
+import reduced from "ramda/es/reduced"
 import uuidv4 from "uuid/v4"
 import XLSX = require("xlsx")
 import { OssConf } from "../configFactory/ossConf"
@@ -150,8 +151,8 @@ export default class ExportProejct {
         const reports = await repsm.find(
             {
                 $or: [
-                    {projectId},
-                    {proposalId}
+                    { projectId },
+                    { proposalId: proposalId.toString() }
                 ],
                 category: "Hospital",
                 phase: { $lt: currentPhase }
@@ -162,8 +163,8 @@ export default class ExportProejct {
         const presets = await presm.find(
             {
                 $or: [
-                    {projectId},
-                    {proposalId}
+                    { projectId },
+                    { proposalId: proposalId.toString() }
                 ],
                 category: 8,
                 phase: { $lte: currentPhase },
@@ -201,24 +202,6 @@ export default class ExportProejct {
                     entrance = "未开发"
                 }
             }
-
-            // if (entrance === "") {
-            //     const tmp = presets.find( (pp) => {
-            //         return pp.phase === 0 &&
-            //             pp.hospital.toString() === x.hospital.toString() &&
-            //             pp.product.toString() === x.product.toString()
-            //     } )
-
-            //     if (tmp) {
-            //         if (tmp.currentDurgEntrance === "1") {
-            //             entrance = "已开发"
-            //         } else if (tmp.currentDurgEntrance === "2") {
-            //             entrance = "正在开发"
-            //         } else {
-            //             entrance = "未开发"
-            //         }
-            //     }
-            // }
 
             let pss = ""
             pss = this.formatPhaseToStringDefault(
@@ -261,23 +244,75 @@ export default class ExportProejct {
             }
 
             return [
-                pss,
+                pss, // 0
                 hospital.position,
-                hospital.name,
+                hospital.name, // 2
                 hospital.level,
                 resource ? resource.name : "未分配",
                 product.name,
                 entrance,
-                cpp ? cpp.currentPatientNum : 0,
+                cpp ? cpp.currentPatientNum : 0, // 7
                 qFunc(x.phase < 0 ? x.achievements : cpp.lastAchievement, x.phase < 0 ? x.salesQuota : cpp.lastQuota),
-                x.sales
+                x.sales // 9
             ]
         } )
+
+        /**
+         * 1. group by pss
+         */
+        const toPhase = ((x: Array<string | number>) => {
+            return x[0] as string
+        } )
+        const grouped = R.groupBy(toPhase, reportProposalData)
+
+        let fr: Array<Array<string | number>> = []
+        for (const key of Object.keys(grouped)) {
+            const rd = grouped[key]
+
+            /**
+             * 2. to every phase, reduceBy hospital
+             */
+            const toHos = ((x: Array<string | number>) => {
+                return x[2] as string
+            } )
+
+            const hos = R.groupBy(toHos, rd)
+            /**
+             * 2.1 sort in the hos
+             */
+            const sortFunc =
+                (left: Array<string | number>, right: Array<string | number>) => {
+                    const m = (right[7] as number) - (left[7] as number)
+                    return m === 0 ? (right[9] as number) - (left[9] as number) : m
+                }
+
+            const nhos = Object.keys(hos).map((x) => {
+                const ht = hos[x].sort(sortFunc)
+                return { key: x, lst: ht }
+            } )
+
+            const patNum = (acc: number, item: Array<string | number>) => acc += item[7] as number
+            const reduce = R.reduceBy(patNum, 0, toHos, rd)
+
+            /**
+             * 3. sort hospital in the phase
+             */
+            const sortArr = Object.keys(reduce).map((x: string) => {
+                return { key: x, value: reduce[x] }
+            })
+            const sortedWithPat = R.sort((left, right) => right.value - left.value, sortArr)
+
+            let result: Array<Array<string | number>> = []
+            sortedWithPat.forEach( (item) => {
+                result = result.concat(nhos.find((x) => x.key === item.key).lst)
+            } )
+            fr = fr.concat(result)
+        }
 
         const headers: Array<Array<string | number>> = [
             ["周期", "城市名称", "医院名称", "医院等级", "负责代表", "产品", "进药状态", "患者数量", "指标达成率", "销售额"]
         ]
-        const data = headers.concat(reportProposalData)
+        const data = headers.concat(fr)
 
         const jobId = uuidv4()
         const workbook = XLSX.utils.book_new()
@@ -296,10 +331,6 @@ export default class ExportProejct {
          * 5. 链接oss
          */
         await this.pushResult2OSS(jobId)
-
-        /**
-         * 6. 给前端MQTT消息, 用HTTP
-         */
 
         return jobId
     }
