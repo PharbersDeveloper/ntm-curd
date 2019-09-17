@@ -1,7 +1,6 @@
 "use strict"
 import OSS from "ali-oss"
 import R from "ramda"
-import reduced from "ramda/es/reduced"
 import uuidv4 from "uuid/v4"
 import XLSX = require("xlsx")
 import { OssConf } from "../configFactory/ossConf"

@@ -14,13 +14,30 @@ import Requirement from "../../src/models/Requirement"
 import Resource from "../../src/models/Resource"
 import UsableProposal from "../../src/models/UsableProposal"
 import Validation from "../../src/models/Validation"
+import OSS from "ali-oss"
+import uuidv4 from "uuid/v4"
 
 @suite(timeout(1000 * 60), slow(2000))
 class ExcelDataInput {
 
+    constructor() {
+        this.client = new OSS({
+            accessKeyId: "LTAIEoXgk4DOHDGi",
+            accessKeySecret: "x75sK6191dPGiu9wBMtKE6YcBBh8EI",
+            bucket: "pharbers-sandbox",
+            region: "oss-cn-beijing",
+        })
+    }
+
+    private client: OSS = null
+    private localPath: string = process.env.PH_TS_SERVER_HOME + "/test/data/Images/"
+    private exportDir: string = "tm-resources/"
+    private suffix: string = ".xlsx"
+    
     public static before() {
         PhLogger.info(`before starting the test`)
-        mongoose.connect("mongodb://pharbers.com:5555/pharbers-ntm-client")
+        // mongoose.connect("mongodb://pharbers.com:5555/pharbers-ntm-client")
+        mongoose.connect("mongodb://localhost:27017/pharbers-ntm-client")
     }
 
     public static after() {
@@ -38,6 +55,38 @@ class ExcelDataInput {
         PhLogger.info(`start input data with excel`)
         const file = "test/data/ucb.xlsx"
         await this.loadExcelData(file)
+    }
+
+    public async pushAvatar2Oss(file: string): Promise<Image> {
+
+        if (!file || file.length == 0) {
+            return null
+        }
+
+        try {
+            
+            const jobId = uuidv4()
+            const r1 = await this.client.put(this.exportDir + jobId, this.localPath + file)
+            PhLogger.info("put success: %j", r1)
+
+            const th = new Image()
+            const jsonConvert: JsonConvert = new JsonConvert()
+            jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
+            jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
+
+            const avatar = jsonConvert.deserializeObject({
+                flag : 1,
+                img : jobId,
+                tag : "who cares",
+            }, Image)
+
+            await th.getModel().create(avatar)
+
+            return avatar
+        } catch (err) {
+            PhLogger.info("error: %j", err)
+            return null
+        }
     }
 
     public async loadExcelData(file: string) {
@@ -92,12 +141,13 @@ class ExcelDataInput {
 
             const jsonConvert: JsonConvert = new JsonConvert()
             const th = new Hospital()
-            hosps = await Promise.all(data.map ( (x) => {
+            hosps = await Promise.all(data.map ( async (x) => {
                 // jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
                 jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
                 jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
                 const tmp = jsonConvert.deserializeObject(x, Hospital)
-                tmp.avatar = images.find((y) => y.tag === "医院")
+                // tmp.avatar = images.find((y) => y.tag === "医院")
+                tmp.avatar = await this.pushAvatar2Oss(tmp.avatarPath)
                 return th.getModel().create(tmp)
             }))
         }
@@ -114,12 +164,13 @@ class ExcelDataInput {
 
             const jsonConvert: JsonConvert = new JsonConvert()
             const th = new Product()
-            products = await Promise.all(data.map ( (x) => {
+            products = await Promise.all(data.map ( async (x) => {
                 // jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
                 jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
                 jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
                 const tmp = jsonConvert.deserializeObject(x, Product)
-                tmp.avatar = images.find((y) => y.tag === "商品")
+                // tmp.avatar = images.find((y) => y.tag === "商品")
+                tmp.avatar = await this.pushAvatar2Oss(tmp.avatarPath)
                 return th.getModel().create(tmp)
             }))
         }
@@ -136,12 +187,13 @@ class ExcelDataInput {
 
             const jsonConvert: JsonConvert = new JsonConvert()
             const th = new Resource()
-            resources = await Promise.all(data.map ( (x) => {
+            resources = await Promise.all(data.map ( async (x) => {
                 // jsonConvert.operationMode = OperationMode.LOGGING // print some debug data
                 jsonConvert.ignorePrimitiveChecks = true // don't allow assigning number to string etc.
                 jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
                 const tmp = jsonConvert.deserializeObject(x, Resource)
-                tmp.avatar = images.find((y) => y.tag === "代表")
+                // tmp.avatar = images.find((y) => y.tag === "代表")
+                tmp.avatar = await this.pushAvatar2Oss(tmp.avatarPath)
                 return th.getModel().create(tmp)
             }))
         }
