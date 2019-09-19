@@ -12,8 +12,10 @@ RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && \
 
 LABEL ntm-curd.version=1.0.19
 
-RUN echo "Asia/Shanghai" > /etc/timezone
-RUN dpkg-reconfigure -f noninteractive tzdata
+RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+RUN export DEBIAN_FRONTEND=noninteractive
+RUN apt-get install -y tzdata
+RUN dpkg-reconfigure --frontend noninteractive tzdata
 
 WORKDIR /app
 
