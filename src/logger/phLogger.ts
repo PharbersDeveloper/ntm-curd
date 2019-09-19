@@ -8,7 +8,8 @@ class PhLogger {
     }
 
     public startConnectLog(app: { use: (arg0: any) => void; }) {
-        app.use(connectLogger(getLogger("http"), { level: "auto" }))
+        // tslint:disable-next-line: max-line-length
+        app.use(connectLogger(getLogger("http"), { level: "auto", format: (req, res, format) => format(`:remote-addr - :method :url HTTP/:http-version :status :referrer`)}))
     }
 
     public trace(msg?: any, ...params: any[]): void {

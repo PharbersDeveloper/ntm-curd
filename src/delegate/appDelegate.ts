@@ -149,12 +149,12 @@ export default class AppDelegate {
 
             // 临时R计算
 
-            PhLogger.info(req.body.callr)
-            PhLogger.info(req.body.type)
-            PhLogger.info(req.body.periodId)
-            PhLogger.info(req.body.projectId)
-            PhLogger.info(req.body.proposalId)
-            PhLogger.info(req.body.phase)
+            // PhLogger.info(req.body.callr)
+            // PhLogger.info(req.body.type)
+            // PhLogger.info(req.body.periodId)
+            // PhLogger.info(req.body.projectId)
+            // PhLogger.info(req.body.proposalId)
+            // PhLogger.info(req.body.phase)
 
             let configFile = ""
 
