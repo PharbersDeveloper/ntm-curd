@@ -10,7 +10,10 @@ RUN apt-get update && apt-get install -y && \
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - && \
 	apt-get install -y nodejs
 
-LABEL ntm-curd.version=1.0.18
+LABEL ntm-curd.version=1.0.19
+
+RUN echo "Asia/Shanghai" > /etc/timezone
+RUN dpkg-reconfigure -f noninteractive tzdata
 
 WORKDIR /app
 
