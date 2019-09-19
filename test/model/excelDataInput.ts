@@ -1,6 +1,8 @@
+import OSS from "ali-oss"
 import { JsonConvert, OperationMode, ValueCheckingMode } from "json2typescript"
 import { slow, suite, test, timeout } from "mocha-typescript"
 import mongoose = require("mongoose")
+import uuidv4 from "uuid/v4"
 import XLSX = require("xlsx")
 import PhLogger from "../../src/logger/phLogger"
 import Evaluation from "../../src/models/Evaluation"
@@ -14,11 +16,25 @@ import Requirement from "../../src/models/Requirement"
 import Resource from "../../src/models/Resource"
 import UsableProposal from "../../src/models/UsableProposal"
 import Validation from "../../src/models/Validation"
-import OSS from "ali-oss"
-import uuidv4 from "uuid/v4"
 
 @suite(timeout(1000 * 60), slow(2000))
 class ExcelDataInput {
+
+    public static before() {
+        PhLogger.info(`before starting the test`)
+        mongoose.connect("mongodb://pharbers.com:5555/pharbers-ntm-client")
+        // mongoose.connect("mongodb://localhost:27017/pharbers-ntm-client")
+    }
+
+    public static after() {
+        PhLogger.info(`after starting the test`)
+        mongoose.disconnect()
+    }
+
+    private client: OSS = null
+    private localPath: string = process.env.PH_TS_SERVER_HOME + "/test/data/Images/"
+    private exportDir: string = "tm-resources/"
+    private suffix: string = ".xlsx"
 
     constructor() {
         this.client = new OSS({
@@ -27,22 +43,6 @@ class ExcelDataInput {
             bucket: "pharbers-sandbox",
             region: "oss-cn-beijing",
         })
-    }
-
-    private client: OSS = null
-    private localPath: string = process.env.PH_TS_SERVER_HOME + "/test/data/Images/"
-    private exportDir: string = "tm-resources/"
-    private suffix: string = ".xlsx"
-    
-    public static before() {
-        PhLogger.info(`before starting the test`)
-        // mongoose.connect("mongodb://pharbers.com:5555/pharbers-ntm-client")
-        mongoose.connect("mongodb://localhost:27017/pharbers-ntm-client")
-    }
-
-    public static after() {
-        PhLogger.info(`after starting the test`)
-        mongoose.disconnect()
     }
 
     @test public async excelModelData() {
@@ -59,12 +59,12 @@ class ExcelDataInput {
 
     public async pushAvatar2Oss(file: string): Promise<Image> {
 
-        if (!file || file.length == 0) {
+        if (!file || file.length === 0) {
             return null
         }
 
         try {
-            
+
             const jobId = uuidv4()
             const r1 = await this.client.put(this.exportDir + jobId, this.localPath + file)
             PhLogger.info("put success: %j", r1)
@@ -80,9 +80,9 @@ class ExcelDataInput {
                 tag : "who cares",
             }, Image)
 
-            await th.getModel().create(avatar)
+            return await th.getModel().create(avatar)
 
-            return avatar
+            // return avatar
         } catch (err) {
             PhLogger.info("error: %j", err)
             return null

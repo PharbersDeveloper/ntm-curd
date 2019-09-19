@@ -31,7 +31,7 @@ class Hospital extends Typegoose implements IModelBase<Hospital> {
 
     @prop({ ref: Image, required: true })
     public avatar: Ref<Image>
-    
+
     @JsonProperty("avatar", String)
     public avatarPath?: string = ""
 

@@ -25,7 +25,7 @@ class Product extends Typegoose implements IModelBase<Product> {
 
     @prop({ ref: Image, required: true })
     public avatar: Ref<Image>
-    
+
     @JsonProperty("avatar", String)
     public avatarPath?: string = ""
 
