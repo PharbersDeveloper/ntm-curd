@@ -42,9 +42,9 @@ class Report extends Typegoose implements IModelBase<Report> {
     public region?: string = ""
 
     // 写到下期
-    // @JsonProperty("potential", Number)
-    // @prop({ required: false, default: 0 })
-    // public potential?: number = 0
+    @JsonProperty("potential", Number)
+    @prop({ required: false, default: 0 })
+    public potential?: number = 0
 
     // 写到下期
     @JsonProperty("patientNum", Number)
