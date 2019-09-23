@@ -6,14 +6,14 @@
             "pattern": "-yyyy-MM-dd",
             "category": "http",
             "layout": { 
-                "type": "pattern", "pattern": "{\"Time\": \"%d{yyyy-MM-dd hh:mm:ss}\",\"Hostname\": \"%h\",\"ProjectName\": \"ntm-curd\",\"File\": \"%f:%l\",\"Func\": \"\",\"JobId\": \"\",\"TraceId\": \"\",\"UserId\": \"\",\"Message\": \"%m\",\"Level\": \"%p\"}%n" 
+                "type": "pattern", "pattern": "{\"Time\": \"%d{yyyy-MM-dd hh:mm:ss}\",\"Hostname\": \"%h\",\"ProjectName\": \"ntm-curd\",\"File\": \"%f:%l\",\"Func\": \"\",\"JobId\": \"\",\"TraceId\": \"\",\"UserId\": \"\",\"Message\": \"%m\",\"Level\": \"%p\"}" 
             }
         },
         "out": {
             "type": "stdout",
             "level": "TRACE",
             "layout": { 
-                "type": "pattern", "pattern": "{\"Time\": \"%d{yyyy-MM-dd hh:mm:ss}\",\"Hostname\": \"%h\",\"ProjectName\": \"ntm-curd\",\"File\": \"%f:%l\",\"Func\": \"\",\"JobId\": \"\",\"TraceId\": \"\",\"UserId\": \"\",\"Message\": \"%m\",\"Level\": \"%p\"}%n" 
+                "type": "pattern", "pattern": "{\"Time\": \"%d{yyyy-MM-dd hh:mm:ss}\",\"Hostname\": \"%h\",\"ProjectName\": \"ntm-curd\",\"File\": \"%f:%l\",\"Func\": \"\",\"JobId\": \"\",\"TraceId\": \"\",\"UserId\": \"\",\"Message\": \"%m\",\"Level\": \"%p\"}" 
             }
         },
         "app": {
@@ -22,14 +22,14 @@
             "maxLogSize": 10485760,
             "numBackups": 3,
             "layout": { 
-                "type": "pattern", "pattern": "{\"Time\": \"%d{yyyy-MM-dd hh:mm:ss}\",\"Hostname\": \"%h\",\"ProjectName\": \"ntm-curd\",\"File\": \"%f:%l\",\"Func\": \"\",\"JobId\": \"\",\"TraceId\": \"\",\"UserId\": \"\",\"Message\": \"%m\",\"Level\": \"%p\"}%n" 
+                "type": "pattern", "pattern": "{\"Time\": \"%d{yyyy-MM-dd hh:mm:ss}\",\"Hostname\": \"%h\",\"ProjectName\": \"ntm-curd\",\"File\": \"%f:%l\",\"Func\": \"\",\"JobId\": \"\",\"TraceId\": \"\",\"UserId\": \"\",\"Message\": \"%m\",\"Level\": \"%p\"}" 
             }
         },
         "errorFile": {
             "type": "file",
             "filename": "log/ntm-curd-errors.log",
             "layout": { 
-                "type": "pattern", "pattern": "{\"Time\": \"%d{yyyy-MM-dd hh:mm:ss}\",\"Hostname\": \"%h\",\"ProjectName\": \"ntm-curd\",\"File\": \"%f:%l\",\"Func\": \"\",\"JobId\": \"\",\"TraceId\": \"\",\"UserId\": \"\",\"Message\": \"%m\",\"Level\": \"%p\"}%n" 
+                "type": "pattern", "pattern": "{\"Time\": \"%d{yyyy-MM-dd hh:mm:ss}\",\"Hostname\": \"%h\",\"ProjectName\": \"ntm-curd\",\"File\": \"%f:%l\",\"Func\": \"\",\"JobId\": \"\",\"TraceId\": \"\",\"UserId\": \"\",\"Message\": \"%m\",\"Level\": \"%p\"}" 
             }
         },
         "errors": {
