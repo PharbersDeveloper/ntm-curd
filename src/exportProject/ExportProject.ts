@@ -265,7 +265,7 @@ export default class ExportProejct {
             } )
         } else {
             headers = [
-                ["季度", "代表", "医院", "产品名称", "销售指标分配", "预算分配"]
+                ["周期", "代表", "医院", "产品名称", "销售指标分配", "预算分配"]
             ]
             /**
              * inputReport
