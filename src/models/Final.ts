@@ -1,10 +1,6 @@
 "use strict"
 import { prop, Ref, Typegoose } from "typegoose"
-import { AnswerCategory } from "../enum/AnswerCategory"
-import Hospital from "./Hospital"
 import IModelBase from "./modelBase"
-import Product from "./Product"
-import Resource from "./Resource"
 
 class Final extends Typegoose implements IModelBase<Final> {
     @prop({ required: true })
@@ -27,6 +23,24 @@ class Final extends Typegoose implements IModelBase<Final> {
 
     @prop({ required: true })
     public newAccount: number
+
+    @prop({ required: false})
+    public generalPerformance: number
+
+    @prop({ required: false})
+    public resourceAssigns: number
+
+    @prop({ required: false})
+    public regionDivision: number
+
+    @prop({ required: false})
+    public targetAssigns: number
+
+    @prop({ required: false})
+    public manageTime: number
+
+    @prop({ required: false})
+    public manageTeam: number
 
     public getModel() {
         return this.getModelForClass(Final)
