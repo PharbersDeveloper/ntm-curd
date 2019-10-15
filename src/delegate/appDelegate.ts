@@ -60,77 +60,77 @@ export default class AppDelegate {
         } ) )
 
         // a middleware function with no mount path. This code is executed for every request to the router
-        // this.router.use((req, res, next) => {
-        //     const auth = req.get("Authorization")
-        //     if (auth === undefined) {
-        //         PhLogger.error("no auth")
-        //         res.status(500).send({error: "no auth!"})
-        //         return
-        //     }
+        this.router.use((req, res, next) => {
+            const auth = req.get("Authorization")
+            if (auth === undefined) {
+                PhLogger.error("no auth")
+                res.status(500).send({error: "no auth!"})
+                return
+            }
 
-        //     const host = this.conf.env.oauthHost
-        //     const port = this.conf.env.oauthPort
-        //     const namespace = this.conf.env.oauthApiNamespace
+            const host = this.conf.env.oauthHost
+            const port = this.conf.env.oauthPort
+            const namespace = this.conf.env.oauthApiNamespace
 
-        //     axios.post(`http://${host}${port}/${namespace}/TokenValidation`, null, {
-        //         headers: {
-        //             Authorization: auth,
-        //         },
-        //     }).then((response) => {
-        //         if (response.data.error !== undefined) {
-        //             PhLogger.error("auth error")
-        //             res.status(500).send(response.data)
-        //             return
-        //         } else {
-        //             next()
-        //         }
-        //     }).catch((error) => {
-        //         PhLogger.error("auth error")
-        //         res.status(500).send(error)
-        //         return
-        //     })
-        // })
+            axios.post(`http://${host}${port}/${namespace}/TokenValidation`, null, {
+                headers: {
+                    Authorization: auth,
+                },
+            }).then((response) => {
+                if (response.data.error !== undefined) {
+                    PhLogger.error("auth error")
+                    res.status(500).send(response.data)
+                    return
+                } else {
+                    next()
+                }
+            }).catch((error) => {
+                PhLogger.error("auth error")
+                res.status(500).send(error)
+                return
+            })
+        })
 
-        // this.router.post("/callR", (req, res, next) => {
+        this.router.post("/callR", (req, res, next) => {
 
-        //     // 临时R计算
-        //     let configFile = ""
+            // 临时R计算
+            let configFile = ""
 
-        //     if (req.body.type === "tm") {
-        //         configFile = "pharbers-resources/TM_Submit_New.json"
-        //     } else if (req.body.type === "ucb") {
-        //         configFile = "pharbers-resources/UCB_Submit_New.json"
-        //     } else {
-        //         PhLogger.warn("unkonwn calc type!")
-        //         configFile = ""
-        //     }
+            if (req.body.type === "tm") {
+                configFile = "pharbers-resources/TM_Submit_New.json"
+            } else if (req.body.type === "ucb") {
+                configFile = "pharbers-resources/UCB_Submit_New.json"
+            } else {
+                PhLogger.warn("unkonwn calc type!")
+                configFile = ""
+            }
 
-        //     const httpCallRUrl = this.conf.env.httpCallRUrl
-        //     const uuid = this.uuidv4()
+            const httpCallRUrl = this.conf.env.httpCallRUrl
+            const uuid = this.uuidv4()
 
-        //     axios.post(httpCallRUrl, {
-        //         jobId: uuid,
-        //         processConfig: configFile,
-        //         processConfigType: "json",
-        //         processLocation: "oss",
-        //         replace: {
-        //             jobId: uuid,
-        //             periodId: req.body.periodId,
-        //             phase: req.body.phase,
-        //             projectId: req.body.projectId,
-        //             proposalId: req.body.proposalId,
-        //         },
-        //     }).then((response) => {
-        //         PhLogger.info("R ok")
-        //         res.status(200).send(response.data)
-        //         return
-        //     }).catch((error) => {
-        //         PhLogger.error("R error")
-        //         PhLogger.error(error)
-        //         res.status(500).send(error)
-        //         return
-        //     })
-        // })
+            axios.post(httpCallRUrl, {
+                jobId: uuid,
+                processConfig: configFile,
+                processConfigType: "json",
+                processLocation: "oss",
+                replace: {
+                    jobId: uuid,
+                    periodId: req.body.periodId,
+                    phase: req.body.phase,
+                    projectId: req.body.projectId,
+                    proposalId: req.body.proposalId,
+                },
+            }).then((response) => {
+                PhLogger.info("R ok")
+                res.status(200).send(response.data)
+                return
+            }).catch((error) => {
+                PhLogger.error("R error")
+                PhLogger.error(error)
+                res.status(500).send(error)
+                return
+            })
+        })
 
         // Add routes for export data to excel
         const exportRoute = "/export/:projectId/phase/:phase"
@@ -148,14 +148,14 @@ export default class AppDelegate {
         } )
 
         // Add kafka producer
-        const kfkTestRoute = "/kfk"
-        this.router.get(kfkTestRoute, async (req, res) => {
-            const value = { "records": [ { "value" : { "test" : "alfred test" } } ] }
-            this.kafka.pushMessage(value)
-            res.json( {
-                jobId: "heiheihei"
-            } )
-        } )
+        // const kfkTestRoute = "/kfk"
+        // this.router.get(kfkTestRoute, async (req, res) => {
+        //     const value = { "records": [ { "value" : { "test" : "alfred test" } } ] }
+        //     this.kafka.pushMessage(value)
+        //     res.json( {
+        //         jobId: "heiheihei"
+        //     } )
+        // } )
 
         this.app.use("/", this.router)
     }
