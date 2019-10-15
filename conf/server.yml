@@ -62,8 +62,5 @@ oss:
   accessKeySecret: x75sK6191dPGiu9wBMtKE6YcBBh8EI
   bucket: pharbers-sandbox
 kfk:
-  kafkaBrokerList: "59.110.31.50:9092"
-  kafkaTopic: "test"
-  kafkaSecretsDir: "secrets/"
-  kafkaPassword: "pharbers"
-  schemaRegisterHost: "59.110.31.50:8081"
+  kafkaBrokerList: "http://pharbers.com:8082"
+  kafkaTopic: "alfredtest"
