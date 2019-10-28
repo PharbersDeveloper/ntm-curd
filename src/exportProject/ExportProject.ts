@@ -144,10 +144,18 @@ export default class ExportProejct {
         const resources = await ressm.find({$or: condiResIds}).exec()
         let unSortData: any[] = []
         let headers: Array<Array<string | number>> = []
+
+        const proposalCase = curProposal.case
         if (isReport) {
-            headers = [
-                ["周期", "城市名称", "医院名称", "医院等级", "负责代表", "产品", "进药状态", "患者数量", "指标达成率", "销售额"]
-            ]
+            if (proposalCase === "ucb") {
+                headers = [
+                    ["周期", "城市名称", "医院名称", "医院等级", "负责代表", "产品", "进药状态", "患者数量", "指标达成率", "销售额"]
+                ]
+            } else if (proposalCase === "tm") {
+                headers = [
+                    ["周期", "城市名称", "医院名称", "医院等级", "负责代表", "产品", "潜力", "指标达成率", "销售额"]
+                ]
+            }
             /**
              * 6. 从数据库中拉取数据Report
              */
@@ -249,19 +257,57 @@ export default class ExportProejct {
                     }
                 }
 
-                return [
-                    pss, // 0
-                    hospital.position,
-                    hospital.name, // 2
-                    hospital.level,
-                    resource ? resource.name : "未分配",
-                    product.name,
-                    entrance,
-                    cpp ? cpp.currentPatientNum : 0, // 7
-                    // tslint:disable-next-line: max-line-length
-                    qFunc(x.phase < 0 ? x.achievements : cpp.lastAchievement, x.phase < 0 ? x.salesQuota : cpp.lastQuota),
-                    x.sales ? x.sales.toFixed(0) : 0 // 9
-                ]
+                const achiTMFunc = (sales: number, salesQuota: number) => {
+                    if (salesQuota === 0) {
+                        return 0
+                    } else {
+                        return (sales / salesQuota).toFixed(3)
+                    }
+                }
+
+                let potentialOrPatient = 0
+                let achi = null
+                if (proposalCase === "ucb") {
+                    const a = x.phase < 0 ? x.achievements : cpp.lastAchievement
+                    const b = x.phase < 0 ? x.salesQuota : cpp.lastQuota
+
+                    potentialOrPatient = cpp ? cpp.currentPatientNum : 0
+                    achi = qFunc(a, b)
+                } else if (proposalCase === "tm") {
+                    potentialOrPatient = cpp ? cpp.potential : 0
+                    achi = achiTMFunc(x.sales, x.salesQuota)
+                }
+
+                if (proposalCase === "ucb") {
+                    return [
+                        pss, // 0
+                        hospital.position,
+                        hospital.name, // 2
+                        hospital.level,
+                        resource ? resource.name : "未分配",
+                        product.name,
+                        entrance,
+                        potentialOrPatient, // 7
+                        // tm 潜力, ucb 病患数量
+                        // tslint:disable-next-line: max-line-length
+                        achi,
+                        x.sales ? x.sales.toFixed(0) : 0 // 9
+                    ]
+                } else if (proposalCase === "tm") {
+                    return [
+                        pss, // 0
+                        hospital.position,
+                        hospital.name, // 2
+                        hospital.level,
+                        resource ? resource.name : "未分配",
+                        product.name,
+                        potentialOrPatient, // 7
+                        // tm 潜力, ucb 病患数量
+                        // tslint:disable-next-line: max-line-length
+                        achi,
+                        x.sales ? x.sales.toFixed(0) : 0 // 9
+                    ]
+                }
             } )
         } else {
             headers = [
