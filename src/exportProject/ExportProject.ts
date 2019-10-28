@@ -367,19 +367,34 @@ export default class ExportProejct {
             /**
              * 2.1 sort in the hos
              */
+            // 7  ====> ucb patient
+            // 6  ====> tm potential
             const sortFunc =
                 (left: Array<string | number>, right: Array<string | number>) => {
                     const m = (right[7] as number) - (left[7] as number)
                     return m === 0 ? (right[9] as number) - (left[9] as number) : m
                 }
 
+            const sortFuncTM =
+                (left: Array<string | number>, right: Array<string | number>) => {
+                    const m = (right[6] as number) - (left[6] as number)
+                    return m === 0 ? (right[8] as number) - (left[8] as number) : m
+                }
+
             const nhos = Object.keys(hos).map((x) => {
-                const ht = hos[x].sort(sortFunc)
-                return { key: x, lst: ht }
+                if (proposalCase === "ucb") {
+                    const ht = hos[x].sort(sortFunc)
+                    return { key: x, lst: ht }
+                } else if (proposalCase === "tm") {
+                    const ht = hos[x].sort(sortFuncTM)
+                    return { key: x, lst: ht }
+                }
             } )
 
             const patNum = (acc: number, item: Array<string | number>) => acc += item[7] as number
-            const reduce = R.reduceBy(patNum, 0, toHos, rd)
+            const potentialNum = (acc: number, item: Array<string | number>) => acc += item[6] as number
+            const reduce = proposalCase === "ucb" ?
+                R.reduceBy(patNum, 0, toHos, rd) : R.reduceBy(potentialNum, 0, toHos, rd)
 
             /**
              * 3. sort hospital in the phase
