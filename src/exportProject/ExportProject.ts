@@ -344,6 +344,27 @@ export default class ExportProejct {
                 unSortData = unSortData.concat(handledPhaseAnswers)
             }
         }
+
+        // tm potential 2018Q1 2018Q2 2018Q3 <== 2018Q4
+        if (proposalCase === "tm") {
+            const Q4 = unSortData.filter((item) => item[0] === "2018Q4")
+            const blankPotentialQ =
+                unSortData.filter((item) => item[0] === "2018Q1" || item[0] === "2018Q2" || item[0] === "2018Q3")
+            for (const row of Q4) {
+                const rowHospital = row[2]
+                const rowProduct = row[5]
+                const rowPotential = row[6]
+
+                const curRow =
+                blankPotentialQ.filter((item) => item[2] === rowHospital && item[5] === rowProduct)
+
+                for (const blankP of curRow) {
+                    blankP[6] = rowPotential
+                }
+            }
+
+        }
+
         /**
          * 1. group by pss
          */
