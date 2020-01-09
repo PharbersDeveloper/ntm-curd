@@ -1,6 +1,7 @@
 "use strict"
 import {JsonObject, JsonProperty} from "json2typescript"
 import { EnvConf } from "./envConf"
+import { KfkConf } from "./kfkConf"
 import { ModelConf } from "./modelConf"
 import { MongoConf } from "./mongoConf"
 import { OssConf } from "./ossConf"
@@ -19,4 +20,7 @@ export class ServerConf {
 
     @JsonProperty("oss", OssConf)
     public oss: OssConf = undefined
+
+    @JsonProperty("kfk", KfkConf)
+    public kfk: KfkConf = undefined
 }

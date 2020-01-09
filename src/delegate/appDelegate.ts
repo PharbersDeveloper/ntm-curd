@@ -7,11 +7,10 @@ import * as yaml from "js-yaml"
 import API, { ResourceTypeRegistry } from "json-api"
 import { APIControllerOpts } from "json-api/build/src/controllers/API"
 import { JsonConvert, ValueCheckingMode } from "json2typescript"
-// import kafkaAvro = require("kafka-avro")
 import mongoose = require("mongoose")
-// import kafka from "node-rdkafka"
 import { ServerConf } from "../configFactory/serverConf"
 import ExportProejct from "../exportProject/ExportProject"
+import KafkaDelegate from "../kafka/KafkaDelegate"
 import PhLogger from "../logger/phLogger"
 import { urlEncodeFilterParser } from "./urlEncodeFilterParser"
 
@@ -35,7 +34,7 @@ export default class AppDelegate {
     private app = express()
     private router = express.Router()
     private exportHandler: ExportProejct = null
-    // private kafka = Kafka
+    private kafka: KafkaDelegate = null // new KafkaDelegate()
 
     public exec() {
         this.loadConfiguration()
@@ -62,9 +61,6 @@ export default class AppDelegate {
 
         // a middleware function with no mount path. This code is executed for every request to the router
         this.router.use((req, res, next) => {
-            // next()
-            // token验证请求及返回处理
-
             const auth = req.get("Authorization")
             if (auth === undefined) {
                 PhLogger.error("no auth")
@@ -95,67 +91,9 @@ export default class AppDelegate {
             })
         })
 
-        // this.router.post("/callE", (req, res, next) => {
-
-        //     // 临时写ES
-
-        //     PhLogger.info(req.body.callr)
-        //     PhLogger.info(req.body.type)
-        //     PhLogger.info(req.body.periodId)
-        //     PhLogger.info(req.body.projectId)
-        //     PhLogger.info(req.body.proposalId)
-        //     PhLogger.info(req.body.phase)
-
-        //     let jsonFile = ""
-
-        //     if (req.body.type === "tmr") {
-        //         jsonFile = "TMCal.json"
-        //     } else if (req.body.type === "ucbr") {
-        //         jsonFile = "UCBCal.json"
-        //     } else {
-        //         jsonFile = "TMMongo2EsJob.json"
-        //     }
-
-        //     const httpCallUrl = this.conf.env.httpCallUrl
-
-        //     axios.post(httpCallUrl, {
-        //         config: {
-        //             bucketName: "pharbers-resources",
-        //             config: {
-        //                 periodId: req.body.periodId,
-        //                 phase: req.body.phase,
-        //                 projectId: req.body.projectId,
-        //                 proposalId: req.body.proposalId,
-        //             },
-        //             mode: req.body.type,
-        //             name: "testTM",
-        //             ossKey: jsonFile,
-        //             topic: "testTM",
-        //         },
-        //         id: this.uuidv4(),
-        //     }).then((response) => {
-        //         PhLogger.info("E ok")
-        //         res.status(200).send(response.data)
-        //         return
-        //     }).catch((error) => {
-        //         PhLogger.error("E error")
-        //         PhLogger.error(error)
-        //         res.status(500).send(error)
-        //         return
-        //     })
-        // })
-
         this.router.post("/callR", (req, res, next) => {
 
             // 临时R计算
-
-            PhLogger.info(req.body.callr)
-            PhLogger.info(req.body.type)
-            PhLogger.info(req.body.periodId)
-            PhLogger.info(req.body.projectId)
-            PhLogger.info(req.body.proposalId)
-            PhLogger.info(req.body.phase)
-
             let configFile = ""
 
             if (req.body.type === "tm") {
@@ -192,135 +130,32 @@ export default class AppDelegate {
                 res.status(500).send(error)
                 return
             })
-
-            // // Kafka Producer Demo
-
-            // const kafkaBrokerList = this.conf.env.kafkaBrokerList
-            // const kafkaTopic = this.conf.env.kafkaTopic
-            // const kafkaSecretsDir = this.conf.env.kafkaSecretsDir
-            // const kafkaPassword = this.conf.env.kafkaPassword
-            // const schemaRegisterHost = this.conf.env.schemaRegisterHost
-
-            // const avro = new kafkaAvro({
-            //     kafkaBroker: kafkaBrokerList,
-            //     schemaRegistry: schemaRegisterHost,
-            // })
-
-            // avro.init()
-            // kafkaAvro.getProducer({
-            //     "client.id": "ntm-curd",
-            //     "dr_cb": true,
-            //     "metadata.broker.list": kafkaBrokerList,
-            //     "security.protocol": "SSL",
-            //     "ssl.ca.location": `${kafkaSecretsDir}snakeoil-ca-1.crt`,
-            //     "ssl.certificate.location": `${kafkaSecretsDir}kafkacat-ca1-signed.pem`,
-            //     "ssl.key.location": `${kafkaSecretsDir}kafkacat.client.key`,
-            //     "ssl.key.password": kafkaPassword,
-            // })
-            //     // "getProducer()" returns a Bluebird Promise.
-            //     .then((producer: any) => {
-
-            //         producer.on("disconnected", (arg: any) => {
-            //             PhLogger.error("producer disconnected. " + JSON.stringify(arg))
-            //         })
-
-            //         const value = { name: "John" }
-
-            //         // if partition is set to -1, librdkafka will use the default partitioner
-            //         const partition = -1
-            //         try {
-            //             producer.produce(
-            //             // Topic to send the message to
-            //             kafkaTopic,
-            //             // optionally we can manually specify a partition for the message
-            //             // this defaults to -1 - which will use librdkafka's default partitioner
-            //             // (consistent random for keyed messages, random for unkeyed messages)
-            //             partition,
-            //             // Message to send. Must be a buffer
-            //             // Buffer.from("balabala1"),
-            //             value,
-            //             // for keyed messages, we also specify the key - note that this field is optional
-            //             null,
-            //             // you can send a timestamp here. If your broker version supports it,
-            //             // it will get added. Otherwise, we default to 0
-            //             Date.now(),
-            //             // you can send an opaque token here, which gets passed along
-            //             // to your delivery reports
-            //             (err: any, offset: any) => {
-            //                 PhLogger.error(err)
-            //                 PhLogger.error(offset)
-            //             })
-            //         } catch (err) {
-            //             PhLogger.error("A problem occurred when sending our message")
-            //             PhLogger.error(err)
-            //         }
-            //     })
-
-            // const producer = new kafka.Producer({
-            //     "client.id": "ntm-curd",
-            //     "dr_cb": true,
-            //     "metadata.broker.list": kafkaBrokerList,
-            //     "security.protocol": "SSL",
-            //     "ssl.ca.location": `${kafkaSecretsDir}snakeoil-ca-1.crt`,
-            //     "ssl.certificate.location": `${kafkaSecretsDir}kafkacat-ca1-signed.pem`,
-            //     "ssl.key.location": `${kafkaSecretsDir}kafkacat.client.key`,
-            //     "ssl.key.password": kafkaPassword,
-            //     // 'compression.codec': 'ssl',
-            //     // 'retry.backoff.ms': 200,
-            //     // 'message.send.max.retries': 10,
-            //     // 'socket.keepalive.enable': true,
-            //     // 'queue.buffering.max.messages': 100000,
-            //     // 'queue.buffering.max.ms': 1000,
-            //     // 'batch.num.messages': 1000000,
-            // })
-
-            // // Connect to the broker manually
-            // producer.connect()
-
-            // // Wait for the ready event before proceeding
-            // producer.on("ready", () => {
-            //     try {
-            //         producer.produce(
-            //         // Topic to send the message to
-            //         kafkaTopic,
-            //         // optionally we can manually specify a partition for the message
-            //         // this defaults to -1 - which will use librdkafka's default partitioner
-            //         // (consistent random for keyed messages, random for unkeyed messages)
-            //         null,
-            //         // Message to send. Must be a buffer
-            //         Buffer.from("balabala1"),
-            //         // for keyed messages, we also specify the key - note that this field is optional
-            //         null,
-            //         // you can send a timestamp here. If your broker version supports it,
-            //         // it will get added. Otherwise, we default to 0
-            //         Date.now(),
-            //         // you can send an opaque token here, which gets passed along
-            //         // to your delivery reports
-            //         (err: any, offset: any) => {
-            //             PhLogger.error(err)
-            //             PhLogger.error(offset)
-            //         })
-            //     } catch (err) {
-            //         PhLogger.error("A problem occurred when sending our message")
-            //         PhLogger.error(err)
-            //     }
-            // })
-
-            // // Any errors we encounter, including connection errors
-            // producer.on("event.error", (err) => {
-            //     PhLogger.error("Error from producer")
-            //     PhLogger.error(err)
-            // })
-
         })
 
         // Add routes for export data to excel
         const exportRoute = "/export/:projectId/phase/:phase"
+        const exportInputRoute = "/exportInput/:projectId/phase/:phase"
         this.router.get(exportRoute, async (req, res) => {
             res.json({
-                jobId : await this.exportHandler.export2OssWithProject(req.params.projectId, req.params.phase)
+                jobId : await this.exportHandler.export2OssWithProject(req.params.projectId, req.params.phase, true)
             })
         } )
+        this.router.get(exportInputRoute, async (req, res) => {
+            res.json({
+                // tslint:disable-next-line: max-line-length
+                jobId : await this.exportHandler.export2OssWithProject(req.params.projectId, req.params.phase, false)
+            })
+        } )
+
+        // Add kafka producer
+        // const kfkTestRoute = "/kfk"
+        // this.router.get(kfkTestRoute, async (req, res) => {
+        //     const value = { "records": [ { "value" : { "test" : "alfred test" } } ] }
+        //     this.kafka.pushMessage(value)
+        //     res.json( {
+        //         jobId: "heiheihei"
+        //     } )
+        // } )
 
         this.app.use("/", this.router)
     }
@@ -335,6 +170,7 @@ export default class AppDelegate {
             jsonConvert.valueCheckingMode = ValueCheckingMode.DISALLOW_NULL // never allow null
             this.conf = jsonConvert.deserializeObject(doc, ServerConf)
             this.exportHandler = new ExportProejct(this.conf.oss)
+            this.kafka = new KafkaDelegate(this.conf.kfk)
         } catch (e) {
             PhLogger.fatal( e as Error )
         }
@@ -428,12 +264,6 @@ export default class AppDelegate {
         this.app.post(relation, Front.apiRequest)
         this.app.patch(relation, Front.apiRequest)
         this.app.delete(relation, Front.apiRequest)
-
-        // // Add routes for export data to excel
-        // const exportRoute = "/export/:projectId/phase/:phase"
-        // this.app.get(exportRoute, async (req, res) => {
-        //     res.send(await this.exportHandler.export2OssWithProject(req.params.projectId, req.params.phase))
-        // } )
     }
 
     protected listen2Port(port: number) {

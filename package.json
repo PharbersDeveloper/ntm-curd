@@ -1,6 +1,6 @@
 {
   "name": "ntm-curd",
-	"version": "1.0.15",
+	"version": "1.0.24",
   "description": "",
   "main": "dist/src/index.js",
   "scripts": {
@@ -14,8 +14,8 @@
     "watch": "mocha-typescript-watch",
     "prepare": "tsc"
   },
-  "author": "alfred",
-  "license": "MIT",
+  "author": "alfred, Dante Sun",
+  "license": "GPL3.0",
   "dependencies": {
     "@types/js-yaml": "^3.12.1",
     "ali-oss": "^6.1.1",

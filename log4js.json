@@ -2,23 +2,35 @@
     "appenders": {
         "access": {
             "type": "dateFile",
-            "filename": "log/access.log",
+            "filename": "log/ntm-curd-access.log",
             "pattern": "-yyyy-MM-dd",
-            "category": "http"
+            "category": "http",
+            "layout": { 
+                "type": "pattern", "pattern": "{\"Time\": \"%d{yyyy-MM-dd hh:mm:ss}\",\"Hostname\": \"%h\",\"ProjectName\": \"ntm-curd\",\"File\": \"%f:%l\",\"Func\": \"\",\"JobId\": \"\",\"TraceId\": \"\",\"UserId\": \"\",\"Message\": \"%m\",\"Level\": \"%p\"}" 
+            }
         },
         "out": {
             "type": "stdout",
-            "level": "TRACE"
+            "level": "TRACE",
+            "layout": { 
+                "type": "pattern", "pattern": "{\"Time\": \"%d{yyyy-MM-dd hh:mm:ss}\",\"Hostname\": \"%h\",\"ProjectName\": \"ntm-curd\",\"File\": \"%f:%l\",\"Func\": \"\",\"JobId\": \"\",\"TraceId\": \"\",\"UserId\": \"\",\"Message\": \"%m\",\"Level\": \"%p\"}" 
+            }
         },
         "app": {
             "type": "file",
-            "filename": "log/app.log",
+            "filename": "log/ntm-curd-app.log",
             "maxLogSize": 10485760,
-            "numBackups": 3
+            "numBackups": 3,
+            "layout": { 
+                "type": "pattern", "pattern": "{\"Time\": \"%d{yyyy-MM-dd hh:mm:ss}\",\"Hostname\": \"%h\",\"ProjectName\": \"ntm-curd\",\"File\": \"%f:%l\",\"Func\": \"\",\"JobId\": \"\",\"TraceId\": \"\",\"UserId\": \"\",\"Message\": \"%m\",\"Level\": \"%p\"}" 
+            }
         },
         "errorFile": {
             "type": "file",
-            "filename": "log/errors.log"
+            "filename": "log/ntm-curd-errors.log",
+            "layout": { 
+                "type": "pattern", "pattern": "{\"Time\": \"%d{yyyy-MM-dd hh:mm:ss}\",\"Hostname\": \"%h\",\"ProjectName\": \"ntm-curd\",\"File\": \"%f:%l\",\"Func\": \"\",\"JobId\": \"\",\"TraceId\": \"\",\"UserId\": \"\",\"Message\": \"%m\",\"Level\": \"%p\"}" 
+            }
         },
         "errors": {
             "type": "logLevelFilter",
@@ -27,7 +39,7 @@
         }
     },
     "categories": {
-        "default": { "appenders": [ "out", "app", "errors" ], "level": "DEBUG" },
-        "http": { "appenders": [ "out", "access"], "level": "DEBUG" }
+        "default": { "appenders": [ "out", "app", "errors" ], "level": "DEBUG" ,"enableCallStack": true },
+        "http": { "appenders": [ "out", "access"], "level": "DEBUG" ,"enableCallStack": true }
     }
 }

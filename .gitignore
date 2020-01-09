@@ -4,3 +4,5 @@ docs
 log
 .nyc_output
 tmp/*
+secrets/*
+*.DS_Store

@@ -50,6 +50,9 @@ class Resource extends Typegoose implements IModelBase<Resource> {
     @prop({ ref: Image, required: true })
     public avatar: Ref<Image>
 
+    @JsonProperty("avatar", String)
+    public avatarPath?: string = ""
+
     public getModel() {
         return this.getModelForClass(Resource)
     }
